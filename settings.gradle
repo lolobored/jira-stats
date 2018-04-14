@@ -1,0 +1,8 @@
+rootProject.name = 'jira-stats'
+
+include 'jira-objects'
+include 'jira-rest-calls'
+include 'jira-webgraphs'
+include 'jira-model'
+include 'elasticsearch'
+

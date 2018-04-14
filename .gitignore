@@ -1,0 +1,14 @@
+derby.log
+.gradle
+.idea
+gradlew
+gradlew.bat
+elasticsearch/build
+elasticsearch/out
+gradle
+jira-model
+jira-objects/build
+jira-objects/out
+jira-rest-calls/build
+jira-rest-calls/out
+jira-webgraphs/out
