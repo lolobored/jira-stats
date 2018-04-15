@@ -7,7 +7,6 @@ import org.lolobored.jira.JiraService;
 import org.lolobored.jira.http.HttpException;
 import org.lolobored.jira.model.Issue;
 import org.lolobored.jira.model.Sprint;
-import org.lolobored.jira.model.SprintList;
 import org.lolobored.jira.model.Worklog;
 import org.lolobored.jira.objects.*;
 import org.lolobored.jira.webgraphs.JiraProperties;
@@ -39,10 +38,8 @@ public class JiraFetcher {
 
   // every 15 minutes: 900000
   // every 3h: 10800000
-  @Scheduled(fixedDelay = 10800000)
+  @Scheduled(fixedDelay = 900000)
 	public void loadJira() throws IOException, HttpException, ProcessException {
-
-    SprintList sprintList = SprintList.getInstance();
 
     List<JiraIssue> jiraIssues = jiraService.getAllIssues(jiraProperties.getBaseurl(),
       jiraProperties.getProject(),
@@ -125,7 +122,7 @@ public class JiraFetcher {
       currentSprint.setId(singleSprint.getId());
       currentSprint.setName(singleSprint.getName());
 
-      sprintList.addSprint(currentSprint);
+      elasticSearchService.insertSprint(currentSprint);
 
       for (JiraIssue completedIssue: sprintDetail.getContents().getCompletedIssues()){
         Issue issue= elasticSearchService.getIssue(completedIssue.getKey());

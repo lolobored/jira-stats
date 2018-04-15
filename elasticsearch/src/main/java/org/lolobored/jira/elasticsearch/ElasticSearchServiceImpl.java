@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.lolobored.jira.elasticsearch.repository.IssueRepository;
+import org.lolobored.jira.elasticsearch.repository.SprintRepository;
 import org.lolobored.jira.model.Issue;
+import org.lolobored.jira.model.Sprint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,13 @@ import java.util.List;
 public class ElasticSearchServiceImpl implements ElasticSearchService {
 
 
-	@Autowired
-	private IssueRepository repository;
+  @Autowired
+  private IssueRepository issueRepository;
 
-	private static Logger logger = LoggerFactory.getLogger(ElasticSearchServiceImpl.class);
+  @Autowired
+  private SprintRepository sprintRepository;
+
+  private static Logger logger = LoggerFactory.getLogger(ElasticSearchServiceImpl.class);
 
 	private static ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
 		.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -34,18 +39,23 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
 	@Override
 	public void insertIssue(Issue issue) {
-		repository.save(issue);
+		issueRepository.save(issue);
 	}
+
+  @Override
+	public void insertSprint(Sprint sprint)  {
+    sprintRepository.save(sprint);
+  }
 
 	@Override
 	public List<Issue> getAllIssues(int maximum) {
 		List<Issue> result= new ArrayList();
 		Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
-		Page<Issue> page= repository.findAll(pageRequest);
+		Page<Issue> page= issueRepository.findAll(pageRequest);
 		result.addAll(page.getContent()) ;
 		for (int i=1; i< page.getTotalPages(); i++){
 			pageRequest = pageRequest.next();
-			page= repository.findAll(pageRequest);
+			page= issueRepository.findAll(pageRequest);
 			result.addAll(page.getContent()) ;
 		}
 		return result;
@@ -54,7 +64,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
 	@Override
 	public Issue getIssue(String jiraKey){
-		return repository.findByKey(jiraKey);
+		return issueRepository.findByKey(jiraKey);
 	}
 
 	@Override
@@ -63,11 +73,11 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
     Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
     long start= startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     long end= endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-    Page<Issue> page= repository.findByWorklogsCreatedMillisecondsBetween(pageRequest, start, end);
+    Page<Issue> page= issueRepository.findByWorklogsCreatedMillisecondsBetween(pageRequest, start, end);
     result.addAll(page.getContent()) ;
     for (int i=1; i< page.getTotalPages(); i++){
       pageRequest = pageRequest.next();
-      page= repository.findByWorklogsCreatedMillisecondsBetween(pageRequest,  start, end);
+      page= issueRepository.findByWorklogsCreatedMillisecondsBetween(pageRequest,  start, end);
       result.addAll(page.getContent()) ;
     }
     return result;

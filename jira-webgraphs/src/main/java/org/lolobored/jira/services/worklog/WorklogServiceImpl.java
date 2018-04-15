@@ -47,6 +47,8 @@ public class WorklogServiceImpl implements WorklogService {
 
     // get months
     List<Range> ranges = RangeUtil.getMonthlyRange();
+    ranges.addAll(RangeUtil.getQuarterRange());
+    ranges.addAll(RangeUtil.getSprintRange());
 
     // here's the kind of results we want to get:
     // ['Range Label', 'Range Type', 'Component', 'Issue Type', 'Time spent', 'Jira Search'],

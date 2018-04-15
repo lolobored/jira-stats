@@ -56,7 +56,7 @@ function drawSharePerType(jsonData, dashboard_name_div, chart_div, component_div
         'containerId': range_type_div,
         'options': {
             'filterColumnIndex': range_type_column,
-            'values': ['Month'],
+            'values': ['Month','Quarter'],
             'ui': {
                 'label': '',
                 'labelStacking': 'vertical',
