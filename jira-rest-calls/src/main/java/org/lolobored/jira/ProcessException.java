@@ -6,4 +6,8 @@ public class ProcessException extends Exception {
     super(message);
   }
 
+  public ProcessException(String message, Throwable th){
+    super(message, th);
+  }
+
 }

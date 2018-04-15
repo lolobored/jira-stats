@@ -1,6 +1,27 @@
+apply plugin: 'io.franzbecker.gradle-lombok'
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+sourceCompatibility = 1.8
+
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
 dependencies {
     compile project(':jira-objects')
     compile group: 'com.github.vanroy', name: 'spring-boot-starter-data-jest', version: '3.1.1.RELEASE'
-
-
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.0.0.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '2.0.0.RELEASE'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.16.20'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.4'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.4'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.4'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    testCompile 'junit:junit:4.12'
 }

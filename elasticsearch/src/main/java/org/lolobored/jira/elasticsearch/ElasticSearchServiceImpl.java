@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 	@Override
 	public List<Issue> getAllIssues(int maximum) {
 		List<Issue> result= new ArrayList();
-		Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "title.key");
+		Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
 		Page<Issue> page= repository.findAll(pageRequest);
 		result.addAll(page.getContent()) ;
 		for (int i=1; i< page.getTotalPages(); i++){
@@ -53,5 +55,21 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 	@Override
 	public Issue getIssue(String jiraKey){
 		return repository.findByKey(jiraKey);
+	}
+
+	@Override
+	public List<Issue> getIssuesWithWorklogBetweenPeriod(LocalDateTime startDate, LocalDateTime endDate, int maximum){
+    List<Issue> result= new ArrayList();
+    Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
+    long start= startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    long end= endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    Page<Issue> page= repository.findByWorklogsCreatedMillisecondsBetween(pageRequest, start, end);
+    result.addAll(page.getContent()) ;
+    for (int i=1; i< page.getTotalPages(); i++){
+      pageRequest = pageRequest.next();
+      page= repository.findByWorklogsCreatedMillisecondsBetween(pageRequest,  start, end);
+      result.addAll(page.getContent()) ;
+    }
+    return result;
 	}
 }

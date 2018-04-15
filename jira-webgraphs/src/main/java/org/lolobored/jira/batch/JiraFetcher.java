@@ -7,6 +7,7 @@ import org.lolobored.jira.JiraService;
 import org.lolobored.jira.http.HttpException;
 import org.lolobored.jira.model.Issue;
 import org.lolobored.jira.model.Sprint;
+import org.lolobored.jira.model.SprintList;
 import org.lolobored.jira.model.Worklog;
 import org.lolobored.jira.objects.*;
 import org.lolobored.jira.webgraphs.JiraProperties;
@@ -40,6 +41,9 @@ public class JiraFetcher {
   // every 3h: 10800000
   @Scheduled(fixedDelay = 10800000)
 	public void loadJira() throws IOException, HttpException, ProcessException {
+
+    SprintList sprintList = SprintList.getInstance();
+
     List<JiraIssue> jiraIssues = jiraService.getAllIssues(jiraProperties.getBaseurl(),
       jiraProperties.getProject(),
       jiraProperties.getUsername(),
@@ -77,7 +81,7 @@ public class JiraFetcher {
       for (JiraWorklog jiraWorklog: jiraWorklogs){
         Worklog worklog = new Worklog();
         worklog.setTimeSpentSeconds(jiraWorklog.getTimeSpentSeconds());
-        worklog.setUpdated(jiraWorklog.getUpdated().toInstant().atZone(ZoneId.systemDefault())
+        worklog.setCreated(jiraWorklog.getUpdated().toInstant().atZone(ZoneId.systemDefault())
           .toLocalDateTime());
         issue.getWorklogs().add(worklog);
       }
@@ -110,12 +114,19 @@ public class JiraFetcher {
         jiraProperties.getPassword());
 
       Sprint currentSprint = new Sprint();
-      currentSprint.setEndDate(singleSprint.getEndDate().toInstant().atZone(ZoneId.systemDefault())
-        .toLocalDateTime());
-      currentSprint.setStartDate(singleSprint.getStartDate().toInstant().atZone(ZoneId.systemDefault())
-        .toLocalDateTime());
+      if(singleSprint.getEndDate()!=null) {
+        currentSprint.setEndDate(singleSprint.getEndDate().toInstant().atZone(ZoneId.systemDefault())
+          .toLocalDateTime());
+      }
+      if(singleSprint.getStartDate()!=null) {
+        currentSprint.setStartDate(singleSprint.getStartDate().toInstant().atZone(ZoneId.systemDefault())
+          .toLocalDateTime());
+      }
       currentSprint.setId(singleSprint.getId());
       currentSprint.setName(singleSprint.getName());
+
+      sprintList.addSprint(currentSprint);
+
       for (JiraIssue completedIssue: sprintDetail.getContents().getCompletedIssues()){
         Issue issue= elasticSearchService.getIssue(completedIssue.getKey());
         issue.getSprints().add(currentSprint);

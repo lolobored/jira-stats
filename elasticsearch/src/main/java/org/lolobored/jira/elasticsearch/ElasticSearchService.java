@@ -3,6 +3,7 @@ package org.lolobored.jira.elasticsearch;
 
 import org.lolobored.jira.model.Issue;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ElasticSearchService {
@@ -13,4 +14,6 @@ public interface ElasticSearchService {
 
 	public Issue getIssue(String jiraKey);
 
-}
+	public List<Issue> getIssuesWithWorklogBetweenPeriod(LocalDateTime startDate, LocalDateTime endDate, int maximum);
+
+	}

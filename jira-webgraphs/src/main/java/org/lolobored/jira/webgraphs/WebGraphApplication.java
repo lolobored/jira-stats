@@ -2,10 +2,14 @@ package org.lolobored.jira.webgraphs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.catalina.servlets.DefaultServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
@@ -16,7 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ComponentScan(basePackages = {"org.lolobored"})
 @EnableElasticsearchRepositories("org.lolobored")
 @EnableScheduling
-public class WebGraphApplication {
+public class WebGraphApplication extends SpringBootServletInitializer {
 
   @Bean
   @Primary
@@ -27,9 +31,14 @@ public class WebGraphApplication {
     return objectMapper;
   }
 
-  public static void main(String[] args) {
-
-    SpringApplication.run(WebGraphApplication.class);
-
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+    return application.sources(WebGraphApplication.class);
   }
+
+  public static void main(String[] args) throws Exception {
+    SpringApplication.run(WebGraphApplication.class, args);
+  }
+
+
 }
