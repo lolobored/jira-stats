@@ -62,22 +62,37 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
 	}
 
+  @Override
+  public List<Sprint> getAllSprints(int maximum) {
+    List<Sprint> result= new ArrayList();
+    Pageable pageRequest= new PageRequest(0, maximum);
+    Page<Sprint> page= sprintRepository.findAll(pageRequest);
+    result.addAll(page.getContent()) ;
+    for (int i=1; i< page.getTotalPages(); i++){
+      pageRequest = pageRequest.next();
+      page= sprintRepository.findAll(pageRequest);
+      result.addAll(page.getContent()) ;
+    }
+    return result;
+
+  }
+
 	@Override
 	public Issue getIssue(String jiraKey){
 		return issueRepository.findByKey(jiraKey);
 	}
 
 	@Override
-	public List<Issue> getIssuesWithWorklogBetweenPeriod(LocalDateTime startDate, LocalDateTime endDate, int maximum){
+	public List<Issue> getIssuesWithWorklogBetweenPeriod(LocalDateTime startDate, LocalDateTime endDate, String project, int maximum){
     List<Issue> result= new ArrayList();
     Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
     long start= startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     long end= endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-    Page<Issue> page= issueRepository.findByWorklogsCreatedMillisecondsBetween(pageRequest, start, end);
+    Page<Issue> page= issueRepository.findByWorklogsCreatedMillisecondsBetweenAndProject(pageRequest, start, end, project);
     result.addAll(page.getContent()) ;
     for (int i=1; i< page.getTotalPages(); i++){
       pageRequest = pageRequest.next();
-      page= issueRepository.findByWorklogsCreatedMillisecondsBetween(pageRequest,  start, end);
+      page= issueRepository.findByWorklogsCreatedMillisecondsBetweenAndProject(pageRequest,  start, end, project);
       result.addAll(page.getContent()) ;
     }
     return result;

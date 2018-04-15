@@ -8,4 +8,6 @@ public class RangeConstants {
   public static String ALL_TYPE = "All";
 
   public static int MAXIMUM_NUMBER_MONTH= 6;
+  public static int MAXIMUM_NUMBER_QUARTER= 4;
+  public static int MAXIMUM_NUMBER_SPRINT= 12;
 }

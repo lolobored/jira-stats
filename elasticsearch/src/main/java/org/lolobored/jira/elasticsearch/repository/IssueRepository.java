@@ -13,9 +13,6 @@ public interface IssueRepository extends ElasticsearchRepository<Issue, String> 
 
 	Issue findByKey(String key);
 
-  Page<Issue> findByWorklogsCreatedMillisecondsBetween(Pageable pageable, long startTime, long endTime);
+  Page<Issue> findByWorklogsCreatedMillisecondsBetweenAndProject(Pageable pageable, long startTime, long endTime, String project);
 
-  //Page<Media> findByUser(String user, Pageable pageable);
-
-	//Page<Media> findByUserAndGenresInAndYearGreaterThanEqualAndYearLessThanEqual(String user, List<String> genres, Integer startYear, Integer endYear, Pageable pageable);
 }

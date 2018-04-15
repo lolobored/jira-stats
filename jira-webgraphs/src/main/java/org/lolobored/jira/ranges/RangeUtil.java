@@ -66,7 +66,7 @@ public class RangeUtil {
       quarterNow = now.minusMonths(2);
     }
 
-    int maximumForLoop = RangeConstants.MAXIMUM_NUMBER_MONTH + 1;
+    int maximumForLoop = RangeConstants.MAXIMUM_NUMBER_QUARTER + 1;
     for (int i = 0; i < maximumForLoop; i++) {
       current = quarterNow.minusMonths(3 * i);
       Range quarter = new Range();
@@ -90,25 +90,25 @@ public class RangeUtil {
   /**
    * Get Quarter list
    */
-  public static List<Range> getSprintRange() {
+  public static List<Range> getSprintRange(List<Sprint> sprints) {
     List<Range> result = new ArrayList();
-    /*List<Sprint> sprints = SprintList.getInstance().getSortedList();
-    if (sprints.isEmpty()){
-      return result;
-    }
-    int maximumForLoop = RangeConstants.MAXIMUM_NUMBER_MONTH + 1;
-    for (int i = 0; i < maximumForLoop; i++) {
-      Range sprint = new Range();
-      if (sprints.size() - maximumForLoop - 1< 0){
-        break;
+    Collections.sort(sprints);
+
+    int maximumForLoop = RangeConstants.MAXIMUM_NUMBER_SPRINT;
+    int current=0;
+    while (maximumForLoop!=0 && current <= sprints.size() ){
+      Sprint currentSprint = sprints.get(sprints.size() - current - 1);
+      if (currentSprint.getStartDate()!= null && currentSprint.getEndDate()!= null) {
+        Range sprint = new Range();
+        sprint.setLabel(currentSprint.getName());
+        sprint.setStartDate(currentSprint.getStartDate());
+        sprint.setEndDate(currentSprint.getEndDate());
+        sprint.setType(Range.SPRINT_TYPE);
+        result.add(sprint);
+        maximumForLoop--;
       }
-      Sprint currentSprint = sprints.get(sprints.size() - maximumForLoop - 1);
-      sprint.setLabel(currentSprint.getName());
-      sprint.setStartDate(currentSprint.getStartDate());
-      sprint.setEndDate(currentSprint.getEndDate());
-      sprint.setType(Range.SPRINT_TYPE);
-      result.add(sprint);
-    }*/
+      current++;
+    }
     return result;
   }
 

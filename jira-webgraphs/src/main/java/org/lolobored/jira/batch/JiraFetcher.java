@@ -38,7 +38,7 @@ public class JiraFetcher {
 
   // every 15 minutes: 900000
   // every 3h: 10800000
-  @Scheduled(fixedDelay = 900000)
+  //@Scheduled(fixedDelay = 900000)
 	public void loadJira() throws IOException, HttpException, ProcessException {
 
     List<JiraIssue> jiraIssues = jiraService.getAllIssues(jiraProperties.getBaseurl(),
@@ -60,6 +60,7 @@ public class JiraFetcher {
       issue.setIssueType(jiraIssue.getFields().getIssuetype().getName());
       issue.setKey(jiraIssue.getKey());
       issue.setStatus(jiraIssue.getFields().getStatus().getName());
+      issue.setProject(jiraProperties.getProject());
 
       // check estimate
       JiraTimeTracking jiraTimeTracking= jiraService.getTimetracker(jiraProperties.getBaseurl(),
@@ -143,15 +144,6 @@ public class JiraFetcher {
       }
 
     }
-
-
-
-
-
-		int i=0;
-		/*for (JiraIssue jiraIssue: jiraIssues){
-      elasticSearchService.insertIssue(jiraIssue);
-    }*/
 	}
 
 }

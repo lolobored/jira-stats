@@ -1,6 +1,6 @@
 /*****************************************************************************************************************************************************
  * Main function Responsible to draw the share per type pie parameters required are:
- * 
+ *
  * @param {type}
  *          header : a list representing the column names
  * @param {type}
@@ -17,8 +17,8 @@
  *          range_div : the div name for the range combobox
  * @returns {undefined}
  */
-function drawSharePerType(jsonData, dashboard_name_div, chart_div, component_div, range_type_div, range_div,
-    chart_table_div) {
+function drawSharePerComponent(jsonData, dashboard_name_div, chart_div, project_range_div, range_type_div, range_div,
+                          chart_table_div) {
 
     // The data we will be working on look like this:
     // ['Range Label', 'Range Type', 'Project', 'Issue Type', 'Time spent', 'Jira Search'],
@@ -30,13 +30,13 @@ function drawSharePerType(jsonData, dashboard_name_div, chart_div, component_div
     // set up columns number
     var range_label_column = 0;
     var range_type_column = 1;
-    var component_column = 2;
-    var time_spent_column = 3;
-    var time_spent_jira_search_column = 4;
+    var project_range_column = 2;
+    var component_type_column = 3;
+    var time_spent_column = 4;
+    var time_spent_jira_search_column = 5;
 
     // will be the table we'll use to init the chart
     var chartDataTable;
-    var view;
     var filteredData;
     var groupedData;
 
@@ -47,8 +47,25 @@ function drawSharePerType(jsonData, dashboard_name_div, chart_div, component_div
     var dashboard = new google.visualization.Dashboard(document.getElementById(dashboard_name_div));
 
     // Now create the combo boxes
-    // 
-    // 
+    //
+    //
+
+    // First one is the project combobox
+    var projectBox = new google.visualization.ControlWrapper({
+        'controlType': 'CategoryFilter',
+        'containerId': project_range_div,
+        'options': {
+            'filterColumnIndex': project_range_column,
+            'ui': {
+                'label': '',
+                'labelStacking': 'vertical',
+                'allowTyping': false,
+                'allowMultiple': false,
+                'allowNone': false,
+                'sortValues': false
+            }
+        }
+    });
 
     // Then it's the range type
     var rangeTypeBox = new google.visualization.ControlWrapper({
@@ -56,7 +73,7 @@ function drawSharePerType(jsonData, dashboard_name_div, chart_div, component_div
         'containerId': range_type_div,
         'options': {
             'filterColumnIndex': range_type_column,
-            'values': ['Month','Quarter'],
+            'values': ['Quarter', 'Month', 'Sprint'],
             'ui': {
                 'label': '',
                 'labelStacking': 'vertical',
@@ -117,6 +134,7 @@ function drawSharePerType(jsonData, dashboard_name_div, chart_div, component_div
     });
 
     // Establish dependencies, so that every time we change one combobox we update the others and drow dashboard
+    dashboard.bind(projectBox, rangeTypeBox);
     dashboard.bind(rangeTypeBox, rangeListBox);
     dashboard.bind(rangeListBox, table);
     dashboard.draw(chartDataTable);
@@ -128,7 +146,7 @@ function drawSharePerType(jsonData, dashboard_name_div, chart_div, component_div
 
         // Group datas per issue type and add the sum of the time spent (aggregation against individual timespent)
         // and the list of associated jira issues (we need to concatenate issues and start / close url)
-        groupedData = google.visualization.data.group(filteredData, [component_column], [{
+        groupedData = google.visualization.data.group(filteredData, [component_type_column], [{
             'column': time_spent_column,
             'aggregation': google.visualization.data.sum,
             'type': 'number'
@@ -162,9 +180,7 @@ function drawSharePerType(jsonData, dashboard_name_div, chart_div, component_div
     // Add the selection listener to the chart
     google.visualization.events.addListener(chart, 'select', selectListener);
 
-    rangeTypeBox.select(0);
-
-    return componentBox;
+    return projectBox;
 }
 
 /*****************************************************************************************************************************************************

@@ -17,6 +17,7 @@ public class Issue {
 
   @Id
   private String key;
+  private String project;
   private List<Sprint> sprints= new ArrayList<>();
   private List<Component> components= new ArrayList<>();
   private Sprint endSprint;

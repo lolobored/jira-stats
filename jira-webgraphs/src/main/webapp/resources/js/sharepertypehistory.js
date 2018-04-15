@@ -1,6 +1,6 @@
 /*****************************************************************************************************************************************************
  * Main function Responsible to draw the share per type history graph parameters required are:
- * 
+ *
  * @param {type}
  *          header : a list representing the column names
  * @param {type}
@@ -15,16 +15,16 @@
  *          range_type_div : the div name for the range type combobox
  * @returns {undefined}
  */
-function drawSharePerTypeHistory(jsonData, dashboard_name_div, chart_div, detailed_div, project_range_div, range_type_div, chart_table_div) {
+function drawSharePerComponentHistory(jsonData, dashboard_name_div, chart_div, project_range_div, range_type_div, chart_table_div) {
 
-    // The data we will be working on look like this: 
+    // The data we will be working on look like this:
     // ['Range Label', 'Range Type', 'Project', 'Bug', 'QA Task', 'Improvement', 'Kaizen', 'QA Task', 'Spike', 'Story', 'Task',
     // 'Task Time Bucket', 'Task with QA', 'Zephir Task', 'Bug Jira Search', 'QA Task Jira Search', 'Improvement Jira Search', 'Kaizen Jira Search', 'QA
     // Task Jira Search', 'Spike Jira Search', 'Story Jira Search', 'Task Jira Search', 'Task Time Bucket Jira Search', 'Task with QA Jira Search',
-    // 'Zephir Task Jira Search' ] 
+    // 'Zephir Task Jira Search' ]
     // [ 'February 2016', 'Month', 'GTFRame', 181020, 122000, 10000, 15000, 36000, 45754, 13156, 1234, 23456, 1236,
     // 12546, 'jiraSearchUrl', 'jiraSearchUrl', 'jiraSearchUrl', 'jiraSearchUrl', 'jiraSearchUrl', 'jiraSearchUrl', 'jiraSearchUrl', 'jiraSearchUrl',
-    // 'jiraSearchUrl', 'jiraSearchUrl', 'jiraSearchUrl'] 
+    // 'jiraSearchUrl', 'jiraSearchUrl', 'jiraSearchUrl']
     // Where jiraSearchUrl is something like
     // 'https://jira.us-bottomline.root.bottomline.com/issues/?jql=key%20in(GTFRM-4046,GTFRM-3995,GTFRM-3981,GTFRM-3939,GTFRM-3938,GTFRM-3807)&maxResults=500'
 
@@ -32,11 +32,9 @@ function drawSharePerTypeHistory(jsonData, dashboard_name_div, chart_div, detail
     var range_column = 0;
     var range_type_column = 1;
     var project_range_column = 2;
-    var issue_type_column = 3;
+    var component_type_column = 3;
     var time_spent_column = 4;
     var jira_search_column = 5;
-    var number_of_values = 7;
-    var is_detailed_column = 6;
     var colors = [
         '#3366CC',
         '#DC3912',
@@ -60,23 +58,6 @@ function drawSharePerTypeHistory(jsonData, dashboard_name_div, chart_div, detail
 
     // Create a dashboard with the 3 common combobox (project, range type and range selection)
     var dashboard = new google.visualization.Dashboard(document.getElementById(dashboard_name_div));
-
-    // Then it's the detailed type
-    var isDetailedBox = new google.visualization.ControlWrapper({
-        'controlType': 'CategoryFilter',
-        'containerId': detailed_div,
-        'options': {
-            'filterColumnIndex': is_detailed_column,
-            'ui': {
-                'label': '',
-                'labelStacking': 'vertical',
-                'allowTyping': false,
-                'allowMultiple': false,
-                'allowNone': false,
-                'sortValues': false
-            }
-        }
-    });
 
     // First one is the project combobox
     var projectBox = new google.visualization.ControlWrapper({
@@ -150,8 +131,7 @@ function drawSharePerTypeHistory(jsonData, dashboard_name_div, chart_div, detail
 
     // Establish dependencies, so that every time we change one combobox we update the others and drow dashboard
     dashboard.bind(projectBox, rangeTypeBox);
-    dashboard.bind(rangeTypeBox, isDetailedBox);
-    dashboard.bind(isDetailedBox, table);
+    dashboard.bind(rangeTypeBox, table);
     dashboard.draw(chartDataTable);
 
     // Refresh the chart when a control has been used
@@ -171,7 +151,7 @@ function drawSharePerTypeHistory(jsonData, dashboard_name_div, chart_div, detail
         // then we'll need to get every single possible columns by browsing
         // values in the 'Issue Type' column
         for (var singleLine = 0; singleLine < filteredData.getNumberOfRows(); singleLine++) {
-            var issueType = filteredData.getValue(singleLine, issue_type_column);
+            var issueType = filteredData.getValue(singleLine, component_type_column);
             alreadyExists = false;
             for (var alreadyExistingColumn = 0; alreadyExistingColumn < possibleColumns.length; alreadyExistingColumn++) {
                 if (possibleColumns[alreadyExistingColumn] === issueType) {
@@ -190,7 +170,6 @@ function drawSharePerTypeHistory(jsonData, dashboard_name_div, chart_div, detail
             // add jira search
             header.push(possibleColumns[i] + " jira search");
         }
-        header.push(filteredData.getColumnLabel(is_detailed_column));
 
         newTable.push(header);
 
@@ -200,15 +179,14 @@ function drawSharePerTypeHistory(jsonData, dashboard_name_div, chart_div, detail
         var savedDetailed;
         // processing new lines and trying to insert it into the right row
         for (var singleLine = 0; singleLine < filteredData.getNumberOfRows(); singleLine++) {
-            var issueType = filteredData.getValue(singleLine, issue_type_column);
+            var issueType = filteredData.getValue(singleLine, component_type_column);
             var timeSpent = filteredData.getValue(singleLine, time_spent_column);
             var jiraSearch = filteredData.getValue(singleLine, jira_search_column);
             // checking product + range type + range name is the same as the one before
             // if not we will need to insert the row
             var currentProcess = filteredData.getValue(singleLine, range_column) +
                 filteredData.getValue(singleLine, range_type_column) +
-                filteredData.getValue(singleLine, project_range_column) +
-                filteredData.getValue(singleLine, is_detailed_column);
+                filteredData.getValue(singleLine, project_range_column) ;
             if (currentProcess !== savedProcessed) {
                 if (singleLine !== 0) {
                     // push the details or standard we saved
@@ -257,7 +235,7 @@ function drawSharePerTypeHistory(jsonData, dashboard_name_div, chart_div, detail
                     break;
                 }
             }
-            savedDetailed = filteredData.getValue(singleLine, is_detailed_column);
+
             savedProcessed = currentProcess;
         }
 

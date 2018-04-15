@@ -15,8 +15,10 @@ public interface ElasticSearchService {
 
 	public Issue getIssue(String jiraKey);
 
-	public List<Issue> getIssuesWithWorklogBetweenPeriod(LocalDateTime startDate, LocalDateTime endDate, int maximum);
+	public List<Issue> getIssuesWithWorklogBetweenPeriod(LocalDateTime startDate, LocalDateTime endDate, String project, int maximum);
 
 	public void insertSprint(Sprint sprint);
+
+  public List<Sprint> getAllSprints(int maximum);
 
 }
