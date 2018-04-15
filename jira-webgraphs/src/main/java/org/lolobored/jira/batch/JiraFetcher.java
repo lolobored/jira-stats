@@ -36,11 +36,11 @@ public class JiraFetcher {
   @Autowired
   ElasticSearchService elasticSearchService;
 
-  // every 15 minutes
-  @Scheduled(fixedDelay = 900000)
+  // every 15 minutes: 900000
+  // every 3h: 10800000
+  @Scheduled(fixedDelay = 10800000)
 	public void loadJira() throws IOException, HttpException, ProcessException {
-    List<Issue> toBeLoaded = new ArrayList<>();
-		List<JiraIssue> jiraIssues = jiraService.getAllIssues(jiraProperties.getBaseurl(),
+    List<JiraIssue> jiraIssues = jiraService.getAllIssues(jiraProperties.getBaseurl(),
       jiraProperties.getProject(),
       jiraProperties.getUsername(),
       jiraProperties.getPassword(),
