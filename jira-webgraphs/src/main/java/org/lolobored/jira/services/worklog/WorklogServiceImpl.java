@@ -12,6 +12,7 @@ import org.lolobored.jira.ranges.RangeUtil;
 import org.lolobored.jira.services.worklog.store.WorklogKey;
 import org.lolobored.jira.services.worklog.store.WorklogList;
 import org.lolobored.jira.services.worklog.store.WorklogRange;
+import org.lolobored.jira.webgraphs.JiraProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +26,13 @@ public class WorklogServiceImpl implements WorklogService {
   @Autowired
   ElasticSearchService elasticSearchService;
 
+  @Autowired
+  JiraProperties jiraProperties;
+
   @Override
   public DAOTable getSharedLoggedTimePerComponent() {
     DAOTable result = new DAOTable();
-    WorklogList worklogList = new WorklogList();
-    // time spent per standard grouping
-    Map<String, Integer> timeSpentPerStandardGrouping;
-    Map<String, List<Issue>> parentIssuesPerStandardGrouping;
+    WorklogList worklogList ;
     // create the header
     // we'll use it automatically in the JSP / JS scripts
     DAOHeader daoHeader = new DAOHeader();
@@ -72,6 +73,7 @@ public class WorklogServiceImpl implements WorklogService {
               for (Component component : issue.getComponents()) {
                 WorklogRange worklogRange = worklogList.getRangeForComponent(range.getLabel(), component.getName());
                 worklogRange.addTime(timeSpent.intValue());
+                worklogRange.addJiraIssue(issue.getKey());
               }
             }
           }
@@ -86,7 +88,18 @@ public class WorklogServiceImpl implements WorklogService {
         newRow.put(daoHeader.get(1).getValue(), range.getType());
         newRow.put(daoHeader.get(2).getValue(), value.getWorklogKey().getComponent());
         newRow.put(daoHeader.get(3).getValue(), String.valueOf(value.getTotalTimeSpent()));
-        newRow.put(daoHeader.get(4).getValue(), "");
+        StringBuilder jiraSearch= new StringBuilder(jiraProperties.getBaseurl()).append("/issues/?jql=key%20in(");
+        boolean start= true;
+        for (String issueKey: value.getJiraIssues()){
+          if (!start){
+            jiraSearch.append(",");
+          }
+          jiraSearch.append(issueKey);
+          start= false;
+
+        }
+        jiraSearch.append(")");
+        newRow.put(daoHeader.get(4).getValue(), jiraSearch.toString());
         result.add(newRow);
       }
 
