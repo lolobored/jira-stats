@@ -2,7 +2,7 @@
 
 Simple Javascript UI to display relevant Jira statistics using Google Charts (https://developers.google.com/chart/)
 
-(/assets/homepage.png)
+![Homepage](/assets/homepage.png)
 
 # Goal
 
