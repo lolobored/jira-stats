@@ -4,7 +4,7 @@ Simple Javascript UI to display relevant Jira statistics using Google Charts (ht
 
 ![Homepage](/assets/homepage.png)
 
-# Goal
+## Goal
 
 The goal of the project is to provide graphical information around a private Jira repository through dashboard.
 Each dashboard can be drilled down to the Jira instance in order to get more detailed information.
@@ -17,7 +17,7 @@ Note that the goal is mainly to provide reports over the worklog logged into the
 
 The project has been tested on Jira 7.x
 
-# Statistics provided (WIP)
+## Statistics provided (WIP)
 
 * Worklog per component over a timeperiod
 * Worklog per epics over a timeperiod
@@ -28,7 +28,7 @@ To be added:
 * Average fix time per complexity
 
 
-# Stack
+## Stack
 
 * Spring Boot 2.0
 * Spring MVC
@@ -37,7 +37,7 @@ To be added:
 * Elastic Search
 * Gradle
 
-# Configuration
+## Configuration
 
 In order to configure the project, edit the following properties files:
 * jira-webgraphs/src/main/ressources/application.properties:
@@ -50,13 +50,13 @@ In order to configure the project, edit the following properties files:
   * jira.password : the associated password (my instance does not allow OAuth2)
   * jira.maximum : the maximum number of results obtained per Jira Rest queries (usually 1000)
   
-# Run the project
-## Prerequisites
+## Run the project
+### Prerequisites
 
 * Gradle: https://gradle.org
 * Elastic search (the easiest way before I provide a Docker compose file for everything would be to run one of the official docker images)
 
-## Run command
+### Run command
 
 Once compiled, the produced war file is executable. Run it using: 
 java -jar jira-webgraphs-{version}.war 
