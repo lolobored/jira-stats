@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class WorklogKey {
   private final String rangeLabel;
-  private final String component;
+  private final String entry;
 
   public WorklogKey(String rangeLabel,
-                    String component){
+                    String entry){
     this.rangeLabel= rangeLabel;
-    this.component= component;
+    this.entry= entry;
   }
 }

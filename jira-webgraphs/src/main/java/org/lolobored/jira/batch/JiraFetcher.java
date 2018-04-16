@@ -38,7 +38,7 @@ public class JiraFetcher {
 
   // every 15 minutes: 900000
   // every 3h: 10800000
-  //@Scheduled(fixedDelay = 900000)
+  @Scheduled(fixedDelay = 900000)
 	public void loadJira() throws IOException, HttpException, ProcessException {
 
     List<JiraIssue> jiraIssues = jiraService.getAllIssues(jiraProperties.getBaseurl(),
@@ -61,6 +61,8 @@ public class JiraFetcher {
       issue.setKey(jiraIssue.getKey());
       issue.setStatus(jiraIssue.getFields().getStatus().getName());
       issue.setProject(jiraProperties.getProject());
+			issue.setEpicIssue(jiraIssue.getFields().getCustomfield_10940());
+			issue.setTitle(jiraIssue.getFields().getSummary());
 
       // check estimate
       JiraTimeTracking jiraTimeTracking= jiraService.getTimetracker(jiraProperties.getBaseurl(),
@@ -87,6 +89,21 @@ public class JiraFetcher {
       // add issue to elastic search
       elasticSearchService.insertIssue(issue);
     }
+
+    // now let's replace epic by it's name
+		List<Issue> issues = elasticSearchService.getAllIssues(Integer.parseInt(jiraProperties.getMaximum()));
+    for (Issue issue: issues){
+
+    	if (issue.getEpicIssue() != null){
+    		Issue epicIssue = elasticSearchService.getIssue(issue.getEpicIssue());
+    		if (epicIssue!= null) {
+					// replace epic by its title
+					issue.setEpicTitle(epicIssue.getTitle());
+					// update issue in elastic search
+					elasticSearchService.insertIssue(issue);
+				}
+			}
+		}
 
     JiraBoard board = jiraService.getProjectBoard(jiraProperties.getBaseurl(),
       jiraProperties.getBoard(),

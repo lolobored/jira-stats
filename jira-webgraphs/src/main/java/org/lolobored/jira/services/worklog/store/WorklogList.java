@@ -9,8 +9,8 @@ import java.util.Map;
 public class WorklogList {
   private Map<WorklogKey, WorklogRange> worklogRanges= new HashMap<>();
 
-  public WorklogRange getRangeForComponent(String rangeLabel, String component){
-    WorklogKey key= new WorklogKey(rangeLabel, component);
+  public WorklogRange getRangeForEntry(String rangeLabel, String entry){
+    WorklogKey key= new WorklogKey(rangeLabel, entry);
     WorklogRange result= worklogRanges.get(key);
     if (result == null) {
       result= new WorklogRange();

@@ -18,6 +18,7 @@ public class Issue {
   @Id
   private String key;
   private String project;
+	private String title;
   private List<Sprint> sprints= new ArrayList<>();
   private List<Component> components= new ArrayList<>();
   private Sprint endSprint;
@@ -25,4 +26,6 @@ public class Issue {
   private BigInteger originalEstimateSeconds;
   private String issueType;
   private List<Worklog> worklogs= new ArrayList<>();
+  private String epicIssue;
+	private String epicTitle;
 }

@@ -30,6 +30,8 @@ public class JiraIssueFields {
   private JiraParent parent;
   private List<String> labels;
   private String description;
+  // the related Epic key
+  private String customfield_10940;
 
 
 }
