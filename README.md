@@ -17,6 +17,11 @@ Note that the goal is mainly to provide reports over the worklog logged into the
 
 The project has been tested on Jira 7.x
 
+## How does it work?
+
+A scheduled task is triggered every hour in order to fetch all the relevant information from Jira. It automatically refreshes the document representing Jira issues in Elastic Search.
+Search being way faster in Elastic Search than through Jira it allows the UI to query frenetically the local Elastic Search instance without impacting Jira, providing an almost real-time information.
+
 ## Statistics provided (WIP)
 
 * Worklog per component over a timeperiod
