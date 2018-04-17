@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = {"/worklog", "/home"})
+@RequestMapping(value = {"/","/worklog", "/home"})
 public class WorklogController {
 
   @Autowired

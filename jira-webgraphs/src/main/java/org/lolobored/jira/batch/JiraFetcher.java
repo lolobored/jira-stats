@@ -38,7 +38,7 @@ public class JiraFetcher {
 
   // every 15 minutes: 900000
   // every 3h: 10800000
-  @Scheduled(fixedDelay = 900000)
+  @Scheduled(fixedDelay = 3600000)
 	public void loadJira() throws IOException, HttpException, ProcessException {
 
     List<JiraIssue> jiraIssues = jiraService.getAllIssues(jiraProperties.getBaseurl(),
