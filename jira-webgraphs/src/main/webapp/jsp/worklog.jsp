@@ -145,7 +145,7 @@
 <!-- Share per issue type -->
 <div id="${share_per_component_type_dashboard}">
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
-		Share per component type</h2>
+		Share per component type in working days</h2>
 	<div class="clear"></div>
 	<div id="${share_per_component_type_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_component_type_project_box}" class="project_box"></div>
@@ -159,7 +159,7 @@
 <!-- Share per issue type history -->
 <div id="${share_per_component_type_history_dashboard}">
 	<h2 style="float: left; width: 370px;" title="Click on any points to get to the related JIRA page" class="tooltip">
-		Share per component type history</h2>
+		Share per component type history in working days</h2>
 	<div class="clear"></div>
 	<div id="${share_per_component_type_history_range_type_box}" class="range_type_box push_box_further"></div>
 	<div id="${share_per_component_type_history_project_box}" class="project_box"></div>
@@ -172,7 +172,7 @@
 <!-- Share per issue type -->
 <div id="${share_per_epic_type_dashboard}">
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
-		Share per epic type</h2>
+		Share per epic type in working days</h2>
 	<div class="clear"></div>
 	<div id="${share_per_epic_type_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_epic_type_project_box}" class="project_box"></div>
@@ -186,7 +186,7 @@
 <!-- Share per issue type history -->
 <div id="${share_per_epic_type_history_dashboard}">
 	<h2 style="float: left; width: 370px;" title="Click on any points to get to the related JIRA page" class="tooltip">
-		Share per epic type history</h2>
+		Share per epic type history in working days</h2>
 	<div class="clear"></div>
 	<div id="${share_per_epic_type_history_range_type_box}" class="range_type_box push_box_further"></div>
 	<div id="${share_per_epic_type_history_project_box}" class="project_box"></div>

@@ -1,5 +1,6 @@
 package org.lolobored.jira.services.worklog.component;
 
+import org.apache.commons.lang.StringUtils;
 import org.lolobored.jira.dao.data.DAOHeader;
 import org.lolobored.jira.dao.data.DAORow;
 import org.lolobored.jira.dao.data.DAOTable;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class WorklogComponentServiceImpl implements WorklogComponentService {
@@ -93,7 +95,14 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
         newRow.put(daoHeader.get(1).getValue(), range.getType());
         newRow.put(daoHeader.get(2).getValue(), project);
         newRow.put(daoHeader.get(3).getValue(), value.getWorklogKey().getEntry());
-        newRow.put(daoHeader.get(4).getValue(), String.valueOf(value.getTotalTimeSpent()));
+        int day = (int)TimeUnit.SECONDS.toDays(value.getTotalTimeSpent());
+
+        long hours = TimeUnit.SECONDS.toHours(value.getTotalTimeSpent()- (day *24)) ;
+				// a working day is 8h not 24
+				day = day * 3;
+        hours= new Double((double)hours/60*100).intValue();
+				String time = String.format("%d.%s", day, StringUtils.leftPad(String.valueOf(hours), 2 , "0"));
+				newRow.put(daoHeader.get(4).getValue(), time);
         StringBuilder jiraSearch= new StringBuilder(jiraProperties.getBaseurl()).append("/issues/?jql=key%20in(");
         boolean start= true;
         for (String issueKey: value.getJiraIssues()){
