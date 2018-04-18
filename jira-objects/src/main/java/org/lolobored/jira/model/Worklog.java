@@ -25,6 +25,7 @@ public class Worklog {
   @Setter(AccessLevel.NONE)
   private long createdMilliseconds;
   private BigInteger timeSpentSeconds;
+  private String author;
 
   public void setCreated(LocalDateTime created){
     this.created= created;

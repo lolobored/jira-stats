@@ -109,7 +109,8 @@
     .push_box {margin-left: 320px;}
     .push_box_further {margin-left: 370px;}
     .project_box {float: left; width: 100px; margin-top: 10px;}
-    .range_label_box {float: left; width: 1000px; margin-top: 3px; margin-left: 320px;}
+	.resource_box {float: left; width: 130px; margin-top: 10px;}
+	.range_label_box {float: left; width: 1000px; margin-top: 3px; margin-left: 320px;}
     .range_label_box_370 {float: left; width: 1000px; margin-top: 3px; margin-left: 370px;}
     .version_box {float: left; width: 250px; margin-top: 10px;}
 		.chart {position: relative; left: 30px; width: 1050px; height: 510px;}

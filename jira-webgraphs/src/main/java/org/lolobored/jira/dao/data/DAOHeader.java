@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class DAOHeader extends ArrayList<HeaderColumn> {
 
-  @Getter(AccessLevel.NONE)
+	@Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   public static String STRING_TYPE = HeaderColumn.STRING_TYPE;
   @Getter(AccessLevel.NONE)
@@ -17,6 +17,9 @@ public class DAOHeader extends ArrayList<HeaderColumn> {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   public static String BOOLEAN_TYPE = HeaderColumn.BOOLEAN_TYPE;
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  public static String DATE_TYPE = HeaderColumn.DATE_TYPE;
 
   public DAOHeader() {
     super();

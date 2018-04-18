@@ -83,6 +83,7 @@ public class JiraFetcher {
         worklog.setTimeSpentSeconds(jiraWorklog.getTimeSpentSeconds());
         worklog.setCreated(jiraWorklog.getUpdated().toInstant().atZone(ZoneId.systemDefault())
           .toLocalDateTime());
+        worklog.setAuthor(jiraWorklog.getAuthor().getDisplayName());
         issue.getWorklogs().add(worklog);
       }
 

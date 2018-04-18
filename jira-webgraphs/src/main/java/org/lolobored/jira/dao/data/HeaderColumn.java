@@ -5,11 +5,12 @@ import lombok.Data;
 @Data
 public class HeaderColumn {
 
-  private final String type;
+	private final String type;
   private final String label;
   public final static String STRING_TYPE = "string";
   public final static String NUMBER_TYPE = "number";
   public final static String BOOLEAN_TYPE = "boolean";
+  public static final String DATE_TYPE = "date";
 
   public HeaderColumn(String type, String label) {
     this.type = type;

@@ -13,4 +13,5 @@ public class JiraWorklog {
   private Date updated;
   private Date started;
   private BigInteger timeSpentSeconds;
+  private WorklogAuthor author;
 }

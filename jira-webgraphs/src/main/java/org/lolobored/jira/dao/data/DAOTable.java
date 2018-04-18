@@ -90,6 +90,8 @@ public class DAOTable extends ArrayList<DAORow> {
           dataJSON.setV(Double.valueOf(daoRow.get(headerColumn.getValue())));
         } else if (HeaderColumn.BOOLEAN_TYPE.equals(headerColumn.getType())) {
           dataJSON.setV(Boolean.valueOf(daoRow.get(headerColumn.getValue())));
+        } else if (HeaderColumn.DATE_TYPE.equals(headerColumn.getType())) {
+          dataJSON.setV(daoRow.get(headerColumn.getValue()));
         } else {
           throw new ProcessException("Type [" + headerColumn.getType() + "] is not handled");
         }
