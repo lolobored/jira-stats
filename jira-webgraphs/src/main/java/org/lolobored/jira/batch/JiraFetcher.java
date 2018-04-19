@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,45 +61,52 @@ public class JiraFetcher {
       // insert issues in elasticsearch
       for (JiraIssue jiraIssue : jiraIssues) {
         Issue issue = new Issue();
-        List<org.lolobored.jira.model.Component> components = new ArrayList<>();
-        for (JiraIssueComponent jiraComponent : jiraIssue.getFields().getComponents()) {
-          org.lolobored.jira.model.Component component = new org.lolobored.jira.model.Component();
-          component.setName(jiraComponent.getName());
-          components.add(component);
+        LocalDateTime lastUpdate = jiraIssue.getFields().getUpdated().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        Issue currentIssue = elasticSearchService.getIssue(jiraIssue.getKey());
+        // do not look for details if they are already up to date
+        if (currentIssue== null || currentIssue.getUpdated()== null
+          || !lastUpdate.isEqual(currentIssue.getUpdated())) {
+          List<org.lolobored.jira.model.Component> components = new ArrayList<>();
+          for (JiraIssueComponent jiraComponent : jiraIssue.getFields().getComponents()) {
+            org.lolobored.jira.model.Component component = new org.lolobored.jira.model.Component();
+            component.setName(jiraComponent.getName());
+            components.add(component);
+          }
+          issue.setComponents(components);
+          issue.setIssueType(jiraIssue.getFields().getIssuetype().getName());
+          issue.setKey(jiraIssue.getKey());
+          issue.setStatus(jiraIssue.getFields().getStatus().getName());
+          issue.setProject(project);
+          issue.setEpicIssue(jiraIssue.getFields().getCustomfield_10940());
+          issue.setTitle(jiraIssue.getFields().getSummary());
+          issue.setUpdated(lastUpdate);
+
+          // check estimate
+          JiraTimeTracking jiraTimeTracking = jiraService.getTimetracker(jiraProperties.getBaseurl(),
+            jiraIssue,
+            jiraProperties.getUsername(),
+            jiraProperties.getPassword());
+
+          issue.setOriginalEstimateSeconds(jiraTimeTracking.getOriginalEstimateSeconds());
+
+          // check worklog
+          List<JiraWorklog> jiraWorklogs = jiraService.getWorklog(jiraProperties.getBaseurl(),
+            jiraIssue,
+            jiraProperties.getUsername(),
+            jiraProperties.getPassword());
+
+          for (JiraWorklog jiraWorklog : jiraWorklogs) {
+            Worklog worklog = new Worklog();
+            worklog.setTimeSpentSeconds(jiraWorklog.getTimeSpentSeconds());
+            worklog.setCreated(jiraWorklog.getUpdated().toInstant().atZone(ZoneId.systemDefault())
+              .toLocalDateTime());
+            worklog.setAuthor(jiraWorklog.getAuthor().getDisplayName());
+            issue.getWorklogs().add(worklog);
+          }
+
+          // add issue to elastic search
+          elasticSearchService.insertIssue(issue);
         }
-        issue.setComponents(components);
-        issue.setIssueType(jiraIssue.getFields().getIssuetype().getName());
-        issue.setKey(jiraIssue.getKey());
-        issue.setStatus(jiraIssue.getFields().getStatus().getName());
-        issue.setProject(project);
-        issue.setEpicIssue(jiraIssue.getFields().getCustomfield_10940());
-        issue.setTitle(jiraIssue.getFields().getSummary());
-
-        // check estimate
-        JiraTimeTracking jiraTimeTracking = jiraService.getTimetracker(jiraProperties.getBaseurl(),
-          jiraIssue,
-          jiraProperties.getUsername(),
-          jiraProperties.getPassword());
-
-        issue.setOriginalEstimateSeconds(jiraTimeTracking.getOriginalEstimateSeconds());
-
-        // check worklog
-        List<JiraWorklog> jiraWorklogs = jiraService.getWorklog(jiraProperties.getBaseurl(),
-          jiraIssue,
-          jiraProperties.getUsername(),
-          jiraProperties.getPassword());
-
-        for (JiraWorklog jiraWorklog : jiraWorklogs) {
-          Worklog worklog = new Worklog();
-          worklog.setTimeSpentSeconds(jiraWorklog.getTimeSpentSeconds());
-          worklog.setCreated(jiraWorklog.getUpdated().toInstant().atZone(ZoneId.systemDefault())
-            .toLocalDateTime());
-          worklog.setAuthor(jiraWorklog.getAuthor().getDisplayName());
-          issue.getWorklogs().add(worklog);
-        }
-
-        // add issue to elastic search
-        elasticSearchService.insertIssue(issue);
       }
 
       // now let's replace epic by it's name

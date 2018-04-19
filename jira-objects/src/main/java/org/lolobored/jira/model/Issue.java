@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,4 +30,5 @@ public class Issue {
   private List<Worklog> worklogs= new ArrayList<>();
   private String epicIssue;
 	private String epicTitle;
+	private LocalDateTime updated;
 }

@@ -20,6 +20,7 @@ public class JiraIssueFields {
   // the sprints to which the issue belong
   private List<String> customfield_10540;
   private Date created;
+  private Date updated;
   private Date resolutiondate;
   private JiraResolution resolution;
   private JiraIssuePriority priority;
