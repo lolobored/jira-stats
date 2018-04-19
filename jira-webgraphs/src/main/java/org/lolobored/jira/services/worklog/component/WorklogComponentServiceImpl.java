@@ -47,6 +47,9 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
 
     result.setHeader(daoHeader);
 
+    String projects = jiraProperties.getProject();
+    String[] projectList = projects.split(";");
+
     // get months
     List<Range> ranges = RangeUtil.getMonthlyRange();
     ranges.addAll(RangeUtil.getQuarterRange());
@@ -62,62 +65,65 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
     // 'https://jira.us-bottomline.root.bottomline.com/issues/?jql=key%20in(GTFRM-4046,GTFRM-3995,GTFRM-3981,GTFRM-3939,GTFRM-3938,GTFRM-3807)&maxResults=500'],
     for (Range range : ranges) {
       worklogList = new WorklogList();
-      String project = jiraProperties.getProject();
-      // retrieve the issues
-      // that contains a worklog
-      // in that range
-      List<Issue> issues = elasticSearchService.getIssuesWithWorklogBetweenPeriod(range.getStartDate(), range.getEndDate(), project, 1000);
 
-      for (Issue issue : issues) {
-        List<Worklog> worklogs = issue.getWorklogs();
-        if (issue.getComponents().size()!=0) {
-          for (Worklog worklog : worklogs) {
+      for (String project : projectList) {
 
-            if (worklog.getCreated().isAfter(range.getStartDate()) && worklog.getCreated().isBefore(range.getEndDate())) {
-              BigInteger nbComponents = BigInteger.valueOf(issue.getComponents().size());
-              BigInteger timeSpent = worklog.getTimeSpentSeconds().divide(nbComponents);
-              // browse components
-              for (Component component : issue.getComponents()) {
-                WorklogRange worklogRange = worklogList.getRangeForEntry(range.getLabel(), component.getName());
-                worklogRange.addTime(timeSpent.intValue());
-                worklogRange.addJiraIssue(issue.getKey());
+        // retrieve the issues
+        // that contains a worklog
+        // in that range
+        List<Issue> issues = elasticSearchService.getIssuesWithWorklogBetweenPeriod(range.getStartDate(), range.getEndDate(), project, 1000);
+
+        for (Issue issue : issues) {
+          List<Worklog> worklogs = issue.getWorklogs();
+          if (issue.getComponents().size() != 0) {
+            for (Worklog worklog : worklogs) {
+
+              if (worklog.getCreated().isAfter(range.getStartDate()) && worklog.getCreated().isBefore(range.getEndDate())) {
+                BigInteger nbComponents = BigInteger.valueOf(issue.getComponents().size());
+                BigInteger timeSpent = worklog.getTimeSpentSeconds().divide(nbComponents);
+                // browse components
+                for (Component component : issue.getComponents()) {
+                  WorklogRange worklogRange = worklogList.getRangeForEntry(range.getLabel(), component.getName());
+                  worklogRange.addTime(timeSpent.intValue());
+                  worklogRange.addJiraIssue(issue.getKey());
+                }
               }
             }
+
           }
 
         }
+        // add rows
+        for (WorklogRange value : worklogList.getWorklogRanges().values()) {
+          DAORow newRow = new DAORow();
+          newRow.put(daoHeader.get(0).getValue(), range.getLabel());
+          newRow.put(daoHeader.get(1).getValue(), range.getType());
+          newRow.put(daoHeader.get(2).getValue(), project);
+          newRow.put(daoHeader.get(3).getValue(), value.getWorklogKey().getEntry());
+          int day = (int) TimeUnit.SECONDS.toDays(value.getTotalTimeSpent());
 
-      }
-      // add rows
-      for (WorklogRange value : worklogList.getWorklogRanges().values()) {
-        DAORow newRow = new DAORow();
-        newRow.put(daoHeader.get(0).getValue(), range.getLabel());
-        newRow.put(daoHeader.get(1).getValue(), range.getType());
-        newRow.put(daoHeader.get(2).getValue(), project);
-        newRow.put(daoHeader.get(3).getValue(), value.getWorklogKey().getEntry());
-        int day = (int)TimeUnit.SECONDS.toDays(value.getTotalTimeSpent());
+          long hours = TimeUnit.SECONDS.toHours(value.getTotalTimeSpent() - (day * 24));
+          // a working day is 8h not 24
+          day = day * 3;
+          hours = new Double((double) hours / 60 * 100).intValue();
+          String time = String.format("%d.%s", day, StringUtils.leftPad(String.valueOf(hours), 2, "0"));
+          newRow.put(daoHeader.get(4).getValue(), time);
+          StringBuilder jiraSearch = new StringBuilder(jiraProperties.getBaseurl()).append("/issues/?jql=key%20in(");
+          boolean start = true;
+          for (String issueKey : value.getJiraIssues()) {
+            if (!start) {
+              jiraSearch.append(",");
+            }
+            jiraSearch.append(issueKey);
+            start = false;
 
-        long hours = TimeUnit.SECONDS.toHours(value.getTotalTimeSpent()- (day *24)) ;
-				// a working day is 8h not 24
-				day = day * 3;
-        hours= new Double((double)hours/60*100).intValue();
-				String time = String.format("%d.%s", day, StringUtils.leftPad(String.valueOf(hours), 2 , "0"));
-				newRow.put(daoHeader.get(4).getValue(), time);
-        StringBuilder jiraSearch= new StringBuilder(jiraProperties.getBaseurl()).append("/issues/?jql=key%20in(");
-        boolean start= true;
-        for (String issueKey: value.getJiraIssues()){
-          if (!start){
-            jiraSearch.append(",");
           }
-          jiraSearch.append(issueKey);
-          start= false;
-
+          jiraSearch.append(")");
+          newRow.put(daoHeader.get(5).getValue(), jiraSearch.toString());
+          result.add(newRow);
         }
-        jiraSearch.append(")");
-        newRow.put(daoHeader.get(5).getValue(), jiraSearch.toString());
-        result.add(newRow);
-      }
 
+      }
     }
 
     return result;

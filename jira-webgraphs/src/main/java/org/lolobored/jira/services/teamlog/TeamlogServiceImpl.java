@@ -39,8 +39,7 @@ public class TeamlogServiceImpl implements TeamlogService {
   @Override
   public DAOTable getLoggedTimePerTeamMember() {
     DAOTable daoTable = new DAOTable();
-  	String project= jiraProperties.getProject();
-    TeamlogList teamlogList = new TeamlogList();
+  	TeamlogList teamlogList = new TeamlogList();
     // create the header
     // we'll use it automatically in the JSP / JS scripts
     DAOHeader daoHeader = new DAOHeader();
@@ -51,60 +50,73 @@ public class TeamlogServiceImpl implements TeamlogService {
 		daoHeader.addHeader(DAOHeader.STRING_TYPE, "Project");
 		daoHeader.addHeader(DAOHeader.STRING_TYPE, "Jira Search");
 		daoTable.setHeader(daoHeader);
-    // get all day in current year and last year
+
+		String projects = jiraProperties.getProject();
+		String[] projectList = projects.split(";");
+
+		// get all day in current year and last year
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime currentDayTime = LocalDateTime.of(now.getYear()-1, 1,1, 0,0,0);
 
-		while (!currentDayTime.toLocalDate().isEqual(now.toLocalDate())) {
-			LocalDateTime endDayTime = LocalDateTime.of(currentDayTime.getYear(), currentDayTime.getMonthValue(),
+		for (String project : projectList) {
+			while (!currentDayTime.toLocalDate().isEqual(now.toLocalDate())) {
+
+
+				LocalDateTime endDayTime = LocalDateTime.of(currentDayTime.getYear(), currentDayTime.getMonthValue(),
 					currentDayTime.getDayOfMonth(), 23, 59, 59);
-			// retrieve the issues
-			// that contains a worklog
-			// for that day
-			List<Issue> issues = elasticSearchService.getIssuesWithWorklogBetweenPeriod(currentDayTime, endDayTime,
+				// retrieve the issues
+				// that contains a worklog
+				// for that day
+				List<Issue> issues = elasticSearchService.getIssuesWithWorklogBetweenPeriod(currentDayTime, endDayTime,
 					project, Integer.parseInt(jiraProperties.getMaximum()));
 
-			for (Issue issue : issues) {
-				List<Worklog> worklogs = issue.getWorklogs();
-				for (Worklog worklog : worklogs) {
-					if (worklog.getCreated().isAfter(currentDayTime) && worklog.getCreated().isBefore(endDayTime)) {
-						String guy = worklog.getAuthor();
-						TeamlogEntry teamlogEntry = teamlogList.getTimeForEntry(guy, currentDayTime.toLocalDate());
-						teamlogEntry.addTime(worklog.getTimeSpentSeconds().intValue());
-						teamlogEntry.addJiraIssue(issue.getKey());
+				for (Issue issue : issues) {
+					List<Worklog> worklogs = issue.getWorklogs();
+					for (Worklog worklog : worklogs) {
+						if (worklog.getCreated().isAfter(currentDayTime) && worklog.getCreated().isBefore(endDayTime)) {
+							String guy = worklog.getAuthor();
+							TeamlogEntry teamlogEntry = teamlogList.getTimeForEntry(guy, currentDayTime.toLocalDate());
+							teamlogEntry.addTime(worklog.getTimeSpentSeconds().intValue());
+							teamlogEntry.addJiraIssue(issue.getKey());
+						}
 					}
 				}
+
+				currentDayTime = currentDayTime.plusDays(1);
 			}
-			currentDayTime = currentDayTime.plusDays(1);
-		}
 
 
-      // add rows
-      for (TeamlogEntry value : teamlogList.getTeamlogEntries().values()) {
+			// add rows
+			for (TeamlogEntry value : teamlogList.getTeamlogEntries().values()) {
 				DAORow newRow = new DAORow();
-				LocalDate day= value.getTeamlogKey().getDay();
+				LocalDate day = value.getTeamlogKey().getDay();
 				// trick with google date starting at 0
-				String date = String.format("Date(%d,%d,%d)", day.getYear(), day.getMonthValue()-1, day.getDayOfMonth());
-        newRow.put(daoHeader.get(0).getValue(), date);
-        int timeSpentInSec= value.getTotalTimeSpent();
-				timeSpentInSec = timeSpentInSec / 3600;
-				newRow.put(daoHeader.get(1).getValue(), Integer.toString(timeSpentInSec));
+				String date = String.format("Date(%d,%d,%d)", day.getYear(), day.getMonthValue() - 1, day.getDayOfMonth());
+				newRow.put(daoHeader.get(0).getValue(), date);
+				int timeSpentInSec = value.getTotalTimeSpent();
+				int timeSpentInHours = timeSpentInSec / 3600;
+				// max it at 8 to get the graph right
+				if (timeSpentInHours> 8){
+					timeSpentInHours=8;
+				}
+				newRow.put(daoHeader.get(1).getValue(), Integer.toString(timeSpentInHours));
 				newRow.put(daoHeader.get(2).getValue(), value.getTeamlogKey().getGuy());
 				newRow.put(daoHeader.get(3).getValue(), project);
-				StringBuilder jiraSearch= new StringBuilder(jiraProperties.getBaseurl()).append("/issues/?jql=key%20in(");
-        boolean start= true;
-        for (String issueKey: value.getJiraIssues()){
-          if (!start){
-            jiraSearch.append(",");
-          }
-          jiraSearch.append(issueKey);
-          start= false;
+				StringBuilder jiraSearch = new StringBuilder(jiraProperties.getBaseurl()).append("/issues/?jql=key%20in(");
+				boolean start = true;
+				for (String issueKey : value.getJiraIssues()) {
+					if (!start) {
+						jiraSearch.append(",");
+					}
+					jiraSearch.append(issueKey);
+					start = false;
 
-        }
-        jiraSearch.append(")");
-        newRow.put(daoHeader.get(4).getValue(), jiraSearch.toString());
-        daoTable.add(newRow);
-      }
+				}
+				jiraSearch.append(")");
+				newRow.put(daoHeader.get(4).getValue(), jiraSearch.toString());
+				daoTable.add(newRow);
+			}
+		}
 			return daoTable;
     }
   }

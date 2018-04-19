@@ -21,6 +21,7 @@ public class Sprint implements Comparable<Sprint>{
   @Id
   private Integer id;
   private String name;
+  private String project;
   @JsonDeserialize(using = LocalDateTimeDeserializer.class)
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   private LocalDateTime startDate;
