@@ -92,8 +92,10 @@ public class WorklogController {
   @ModelAttribute("projectList")
   public Map<String, String> getProjectList() {
     Map<String, String> projectList = new HashMap<>();
-    String project= jiraProperties.getProject();
-    projectList.put(project, project);
+    String[] projects= jiraProperties.getProject().split(";");
+    for (String project: projects) {
+      projectList.put(project, project);
+    }
     return projectList;
   }
 
