@@ -30,21 +30,21 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class TeamlogServiceImpl implements TeamlogService {
 
-  @Autowired
-  ElasticSearchService elasticSearchService;
+	@Autowired
+	ElasticSearchService elasticSearchService;
 
-  @Autowired
-  JiraProperties jiraProperties;
+	@Autowired
+	JiraProperties jiraProperties;
 
-  @Override
-  public DAOTable getLoggedTimePerTeamMember() {
-    DAOTable daoTable = new DAOTable();
-  	TeamlogList teamlogList = new TeamlogList();
-    // create the header
-    // we'll use it automatically in the JSP / JS scripts
-    DAOHeader daoHeader = new DAOHeader();
+	@Override
+	public DAOTable getLoggedTimePerTeamMember() {
+		DAOTable daoTable = new DAOTable();
+		TeamlogList teamlogList = new TeamlogList();
+		// create the header
+		// we'll use it automatically in the JSP / JS scripts
+		DAOHeader daoHeader = new DAOHeader();
 
-    daoHeader.addHeader(DAOHeader.DATE_TYPE, "Date");
+		daoHeader.addHeader(DAOHeader.DATE_TYPE, "Date");
 		daoHeader.addHeader(DAOHeader.NUMBER_TYPE, "Time Logged");
 		daoHeader.addHeader(DAOHeader.STRING_TYPE, "Resource");
 		daoHeader.addHeader(DAOHeader.STRING_TYPE, "Project");
@@ -56,7 +56,7 @@ public class TeamlogServiceImpl implements TeamlogService {
 
 		// get all day in current year and last year
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime currentDayTime = LocalDateTime.of(now.getYear()-1, 1,1, 0,0,0);
+		LocalDateTime currentDayTime = LocalDateTime.of(now.getYear() - 1, 1, 1, 0, 0, 0);
 
 		for (String project : projectList) {
 			while (!currentDayTime.toLocalDate().isEqual(now.toLocalDate())) {
@@ -96,8 +96,8 @@ public class TeamlogServiceImpl implements TeamlogService {
 				int timeSpentInSec = value.getTotalTimeSpent();
 				int timeSpentInHours = timeSpentInSec / 3600;
 				// max it at 8 to get the graph right
-				if (timeSpentInHours> 8){
-					timeSpentInHours=8;
+				if (timeSpentInHours > 8) {
+					timeSpentInHours = 8;
 				}
 				newRow.put(daoHeader.get(1).getValue(), Integer.toString(timeSpentInHours));
 				newRow.put(daoHeader.get(2).getValue(), value.getTeamlogKey().getGuy());
@@ -117,6 +117,6 @@ public class TeamlogServiceImpl implements TeamlogService {
 				daoTable.add(newRow);
 			}
 		}
-			return daoTable;
-    }
-  }
+		return daoTable;
+	}
+}

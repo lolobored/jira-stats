@@ -19,6 +19,6 @@ public interface ElasticSearchService {
 
 	public void insertSprint(Sprint sprint);
 
-  public List<Sprint> getAllSprints(int maximum);
+  public List<Sprint> getAllSprintsPerProject(String project, int maximum);
 
 }

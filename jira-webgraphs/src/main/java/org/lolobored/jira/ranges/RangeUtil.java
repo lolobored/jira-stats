@@ -96,7 +96,7 @@ public class RangeUtil {
 
     int maximumForLoop = RangeConstants.MAXIMUM_NUMBER_SPRINT;
     int current=0;
-    while (maximumForLoop!=0 && current <= sprints.size() ){
+    while (maximumForLoop!=0 && current < sprints.size() ){
       Sprint currentSprint = sprints.get(sprints.size() - current - 1);
       if (currentSprint.getStartDate()!= null && currentSprint.getEndDate()!= null) {
         Range sprint = new Range();

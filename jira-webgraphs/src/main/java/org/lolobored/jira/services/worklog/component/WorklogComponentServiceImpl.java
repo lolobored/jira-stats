@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -51,11 +52,8 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
     String[] projectList = projects.split(";");
 
     // get months
-    List<Range> ranges = RangeUtil.getMonthlyRange();
-    ranges.addAll(RangeUtil.getQuarterRange());
-
-    List<Sprint> sprints= elasticSearchService.getAllSprints(Integer.valueOf(jiraProperties.getMaximum()));
-    ranges.addAll(RangeUtil.getSprintRange(sprints));
+    List<Range> commonRanges = RangeUtil.getMonthlyRange();
+    commonRanges.addAll(RangeUtil.getQuarterRange());
 
     // here's the kind of results we want to get:
     // ['Range Label', 'Range Type', 'Component', 'Issue Type', 'Time spent', 'Jira Search'],
@@ -63,10 +61,14 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
     // 'https://jira.us-bottomline.root.bottomline.com/issues/?jql=key%20in(GTFRM-4046,GTFRM-3995,GTFRM-3981,GTFRM-3939,GTFRM-3938,GTFRM-3807)&maxResults=500'],
     // [ 'April 2015', 'Monthly', 'ComponentName', 'Bug', 181020,
     // 'https://jira.us-bottomline.root.bottomline.com/issues/?jql=key%20in(GTFRM-4046,GTFRM-3995,GTFRM-3981,GTFRM-3939,GTFRM-3938,GTFRM-3807)&maxResults=500'],
-    for (Range range : ranges) {
+    for (String project : projectList) {
+			List<Range> ranges = new ArrayList<>(commonRanges);
+			List<Sprint> sprints = elasticSearchService.getAllSprintsPerProject(project, Integer.valueOf(jiraProperties.getMaximum()));
+			ranges.addAll(RangeUtil.getSprintRange(sprints));
+
+			for (Range range : ranges) {
       worklogList = new WorklogList();
 
-      for (String project : projectList) {
 
         // retrieve the issues
         // that contains a worklog

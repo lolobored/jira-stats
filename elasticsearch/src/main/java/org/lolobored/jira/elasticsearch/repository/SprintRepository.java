@@ -8,5 +8,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 public interface SprintRepository extends ElasticsearchRepository<Sprint, Integer> {
 
+	Page<Sprint> findByProject(Pageable pageable, String project);
 
 }

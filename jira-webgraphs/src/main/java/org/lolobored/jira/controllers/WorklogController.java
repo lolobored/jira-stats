@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @Controller
 @RequestMapping(value = {"/","/worklog", "/home"})
@@ -91,7 +92,7 @@ public class WorklogController {
 
   @ModelAttribute("projectList")
   public Map<String, String> getProjectList() {
-    Map<String, String> projectList = new HashMap<>();
+    Map<String, String> projectList = new TreeMap<>();
     String[] projects= jiraProperties.getProject().split(";");
     for (String project: projects) {
       projectList.put(project, project);
