@@ -79,6 +79,8 @@ public class JiraFetcher {
           issue.setProject(project);
           issue.setEpicIssue(jiraIssue.getFields().getCustomfield_10940());
           issue.setTitle(jiraIssue.getFields().getSummary());
+          issue.setCreated(jiraIssue.getFields().getCreated().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+          issue.setResolved(jiraIssue.getFields().getResolutiondate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
           issue.setUpdated(lastUpdate);
 
           // check estimate
