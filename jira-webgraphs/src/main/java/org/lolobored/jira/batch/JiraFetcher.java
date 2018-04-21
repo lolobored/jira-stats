@@ -152,39 +152,42 @@ public class JiraFetcher {
           jiraProperties.getUsername(),
           jiraProperties.getPassword());
 
-        Sprint currentSprint = new Sprint();
-        if (singleSprint.getEndDate() != null) {
-          currentSprint.setEndDate(singleSprint.getEndDate().toInstant().atZone(ZoneId.systemDefault())
-            .toLocalDateTime());
-        }
-        if (singleSprint.getStartDate() != null) {
-          currentSprint.setStartDate(singleSprint.getStartDate().toInstant().atZone(ZoneId.systemDefault())
-            .toLocalDateTime());
-        }
-        currentSprint.setId(singleSprint.getId());
-        currentSprint.setName(singleSprint.getName());
-        currentSprint.setProject(project);
+        if (jiraBoard.getId().equals(singleSprint.getOriginBoardId())) {
 
-        elasticSearchService.insertSprint(currentSprint);
+          Sprint currentSprint = new Sprint();
+          if (singleSprint.getEndDate() != null) {
+            currentSprint.setEndDate(singleSprint.getEndDate().toInstant().atZone(ZoneId.systemDefault())
+              .toLocalDateTime());
+          }
+          if (singleSprint.getStartDate() != null) {
+            currentSprint.setStartDate(singleSprint.getStartDate().toInstant().atZone(ZoneId.systemDefault())
+              .toLocalDateTime());
+          }
+          currentSprint.setId(singleSprint.getId());
+          currentSprint.setName(singleSprint.getName());
+          currentSprint.setProject(project);
 
-        for (JiraIssue completedIssue : sprintDetail.getContents().getCompletedIssues()) {
-          Issue issue = elasticSearchService.getIssue(completedIssue.getKey());
-          issue.getSprints().add(currentSprint);
-          issue.setEndSprint(currentSprint);
-          elasticSearchService.insertIssue(issue);
-        }
-        for (JiraIssue removedIssue : sprintDetail.getContents().getPuntedIssues()) {
-          Issue issue = elasticSearchService.getIssue(removedIssue.getKey());
-          issue.getSprints().add(currentSprint);
-          elasticSearchService.insertIssue(issue);
+          elasticSearchService.insertSprint(currentSprint);
+
+          for (JiraIssue completedIssue : sprintDetail.getContents().getCompletedIssues()) {
+            Issue issue = elasticSearchService.getIssue(completedIssue.getKey());
+            issue.getSprints().add(currentSprint);
+            issue.setEndSprint(currentSprint);
+            elasticSearchService.insertIssue(issue);
+          }
+          for (JiraIssue removedIssue : sprintDetail.getContents().getPuntedIssues()) {
+            Issue issue = elasticSearchService.getIssue(removedIssue.getKey());
+            issue.getSprints().add(currentSprint);
+            elasticSearchService.insertIssue(issue);
+
+          }
+          for (JiraIssue notCompleted : sprintDetail.getContents().getIssuesNotCompletedInCurrentSprint()) {
+            Issue issue = elasticSearchService.getIssue(notCompleted.getKey());
+            issue.getSprints().add(currentSprint);
+            elasticSearchService.insertIssue(issue);
+          }
 
         }
-        for (JiraIssue notCompleted : sprintDetail.getContents().getIssuesNotCompletedInCurrentSprint()) {
-          Issue issue = elasticSearchService.getIssue(notCompleted.getKey());
-          issue.getSprints().add(currentSprint);
-          elasticSearchService.insertIssue(issue);
-        }
-
       }
     }
 	}

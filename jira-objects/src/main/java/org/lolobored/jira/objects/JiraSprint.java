@@ -16,7 +16,6 @@ public class JiraSprint {
   private Date endDate;
   private Date completeDate;
 
-  private String projectId;
-  private String boardId;
+  private Integer originBoardId;
 
 }
