@@ -73,6 +73,7 @@ public class JiraFetcher {
             components.add(component);
           }
           issue.setComponents(components);
+          issue.setLabels(jiraIssue.getFields().getLabels());
           issue.setIssueType(jiraIssue.getFields().getIssuetype().getName());
           issue.setKey(jiraIssue.getKey());
           issue.setStatus(jiraIssue.getFields().getStatus().getName());

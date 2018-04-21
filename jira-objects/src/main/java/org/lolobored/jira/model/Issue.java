@@ -21,18 +21,19 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Issue {
 
-  @Id
-  private String key;
-  private String project;
+	@Id
+	private String key;
+	private String project;
 	private String title;
-  private List<Sprint> sprints= new ArrayList<>();
-  private List<Component> components= new ArrayList<>();
-  private Sprint endSprint;
-  private String status;
-  private BigInteger originalEstimateSeconds;
-  private String issueType;
-  private List<Worklog> worklogs= new ArrayList<>();
-  private String epicIssue;
+	private List<Sprint> sprints = new ArrayList<>();
+	private List<Component> components = new ArrayList<>();
+	private List<String> labels = new ArrayList<>();
+	private Sprint endSprint;
+	private String status;
+	private BigInteger originalEstimateSeconds;
+	private String issueType;
+	private List<Worklog> worklogs = new ArrayList<>();
+	private String epicIssue;
 	private String epicTitle;
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
