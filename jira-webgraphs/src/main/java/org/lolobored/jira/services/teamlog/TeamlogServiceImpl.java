@@ -56,9 +56,10 @@ public class TeamlogServiceImpl implements TeamlogService {
 
 		// get all day in current year and last year
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime currentDayTime = LocalDateTime.of(now.getYear() - 1, 1, 1, 0, 0, 0);
 
 		for (String project : projectList) {
+			teamlogList= new TeamlogList();
+			LocalDateTime currentDayTime = LocalDateTime.of(now.getYear() - 1, 1, 1, 0, 0, 0);
 			while (!currentDayTime.toLocalDate().isEqual(now.toLocalDate())) {
 
 

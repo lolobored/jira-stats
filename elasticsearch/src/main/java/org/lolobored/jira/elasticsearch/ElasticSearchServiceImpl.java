@@ -48,14 +48,14 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
   }
 
 	@Override
-	public List<Issue> getAllIssues(int maximum) {
+	public List<Issue> getAllIssuesPerProject(String project, int maximum) {
 		List<Issue> result= new ArrayList();
 		Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
-		Page<Issue> page= issueRepository.findAll(pageRequest);
+		Page<Issue> page= issueRepository.findByProject(pageRequest, project);
 		result.addAll(page.getContent()) ;
 		for (int i=1; i< page.getTotalPages(); i++){
 			pageRequest = pageRequest.next();
-			page= issueRepository.findAll(pageRequest);
+			page= issueRepository.findByProject(pageRequest, project);
 			result.addAll(page.getContent()) ;
 		}
 		return result;

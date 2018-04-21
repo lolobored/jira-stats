@@ -114,7 +114,7 @@ public class JiraFetcher {
       }
 
       // now let's replace epic by it's name
-      List<Issue> issues = elasticSearchService.getAllIssues(Integer.parseInt(jiraProperties.getMaximum()));
+      List<Issue> issues = elasticSearchService.getAllIssuesPerProject(project, Integer.parseInt(jiraProperties.getMaximum()));
       for (Issue issue : issues) {
 
         if (issue.getEpicIssue() != null) {
