@@ -114,14 +114,14 @@ public class JiraFetcher {
         }
       }
 
-      // now let's replace epic by it's name
+      // now let's replace component by it's name
       List<Issue> issues = elasticSearchService.getAllIssuesPerProject(project, Integer.parseInt(jiraProperties.getMaximum()));
       for (Issue issue : issues) {
 
         if (issue.getEpicIssue() != null) {
           Issue epicIssue = elasticSearchService.getIssue(issue.getEpicIssue());
           if (epicIssue != null) {
-            // replace epic by its title
+            // replace component by its title
             issue.setEpicTitle(epicIssue.getTitle());
             // update issue in elastic search
             elasticSearchService.insertIssue(issue);

@@ -96,7 +96,7 @@ function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, projec
 		}
 	});
 
-	// then it's the epic name
+	// then it's the component name
 	var epicBox = new google.visualization.ControlWrapper({
 		'controlType': 'CategoryFilter',
 		'containerId': epic_name_div,
@@ -269,7 +269,7 @@ function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, projec
 			for (var j = 0; j < selectedValues.length; j++) {
 
 				// check first if the row
-				// - epic is the same as one of those selected
+				// - component is the same as one of those selected
 				// - range type is the same
 				// - project is the same
 				if (selectedValues[j] === chartDataTable.getValue(i, epic_name_column)

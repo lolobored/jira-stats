@@ -130,6 +130,7 @@
 			<nav class="header-nav">
 				<ul>
 					<li><a href="worklog">Worklog</a></li>
+					<li><a href="backlog">Backlog</a></li>
 					<li><a href="teamlog">Teamlog</a></li>
 				</ul>
 			</nav>

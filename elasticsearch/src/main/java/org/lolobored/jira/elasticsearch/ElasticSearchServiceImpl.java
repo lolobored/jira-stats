@@ -97,4 +97,20 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
     }
     return result;
 	}
+
+	@Override
+	public List<Issue> getBugsOpenedWithinPeriod(LocalDateTime startDate, LocalDateTime endDate, String project, int maximum){
+		List<Issue> result= new ArrayList();
+		Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
+		long start= startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		long end= endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		Page<Issue> page= issueRepository.findByCreatedMillisecondsBetweenAndProjectAndIssueType(pageRequest, start, end, project, Issue.Bugs);
+		result.addAll(page.getContent()) ;
+		for (int i=1; i< page.getTotalPages(); i++){
+			pageRequest = pageRequest.next();
+			page= issueRepository.findByCreatedMillisecondsBetweenAndProjectAndIssueType(pageRequest,  start, end, project, Issue.Bugs);
+			result.addAll(page.getContent()) ;
+		}
+		return result;
+	}
 }

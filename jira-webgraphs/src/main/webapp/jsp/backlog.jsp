@@ -10,9 +10,9 @@
 	<spring:url value="/resources/css/graph.css" var="graphcss"/>
 	<!-- From https://www.creativejuiz.fr/blog/tutoriels/creer-menu-sticky-avec-javascript-css#sticky-back -->
 	<spring:url value="/resources/js/navigation-bar.js" var="navigationjs"/>
-	<spring:url value="/resources/js/teamlog.js" var="teamlogjs"/>
+	<spring:url value="/resources/js/backlogpercomponent.js" var="backlogpercomponentjs"/>
 	<link type="text/css" rel="stylesheet" href="${graphcss}"/>
-	<script type="text/javascript" src="${teamlogjs}"></script>
+	<script type="text/javascript" src="${backlogpercomponentjs}"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 	<!-- Create all dashboards and set control states -->
@@ -20,7 +20,7 @@
 
 		// Load the Visualization API and the chart package.
 		google.charts.load('current', {
-			'packages': ['corechart', 'bar', 'table', 'controls', 'annotationchart','calendar']
+			'packages': ['corechart', 'bar', 'table', 'controls', 'annotationchart','line']
 		});
 
 		// Set a callback to run when the Google Visualization API is loaded.
@@ -28,9 +28,9 @@
 
 		function initCharts() {
 
-			team_worklog_control = drawChartCalendarPerResource();
-			
-			team_worklog_control.setState({'selectedValues': [sessionStorage.selectedProject]});
+			backlog_opening_per_component_control = drawChartBacklogOpeningPerComponent();
+
+			backlog_opening_per_component_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 
 		}
 
@@ -54,13 +54,13 @@
 
 
 		// draw calendar
-		function drawChartCalendarPerResource() {
+		function drawChartBacklogOpeningPerComponent() {
 
-			control = drawCalendarPerResource(${team_worklog}, '${team_worklog_dashboard}',
-					'${team_worklog_chart}',
-					'${team_worklog_project_box}',
-					'${team_worklog_resource_box}',
-					'${team_worklog_table}');
+			control = drawBacklogOpeningPerComponent(${backlog_opening_per_component}, '${backlog_opening_per_component_dashboard}',
+				'${backlog_opening_per_component_chart}',
+				'${backlog_opening_per_component_project_box}',
+				'${backlog_opening_per_component_range_type_box}',
+				'${backlog_opening_per_component_table}');
 			return control;
 		}
 
@@ -90,22 +90,22 @@
 	</header>
 	<section id="section" class="main-section first-section">
 		<div class="container">
-			<p class="bigtxt txtcenter">Teamlog Charts</p>
+			<p class="bigtxt txtcenter">Backlog Charts</p>
 		</div>
 	</section>
 </div>
 
 <br> <br> <br> <br>
 <!-- Share per issue type -->
-<div id="${team_worklog_dashboard}">
+<div id="${backlog_opening_per_component_dashboard}">
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
-		Team log in hours</h2>
+		Bugs Opening Per Component</h2>
 	<div class="clear"></div>
-	<div id="${team_worklog_project_box}" class="range_type_box push_box"></div>
-	<div id="${team_worklog_resource_box}" class="resource_box "></div>
+	<div id="${backlog_opening_per_component_project_box}" class="range_type_box push_box"></div>
+	<div id="${backlog_opening_per_component_range_type_box}" class="resource_box "></div>
 	<div class="clear"></div>
-	<div id="${team_worklog_chart}"></div>
-	<div id="${team_worklog_table}" class="table"></div>
+	<div id="${backlog_opening_per_component_chart}"></div>
+	<div id="${backlog_opening_per_component_table}" class="table"></div>
 </div>
 
 <script type="text/javascript" src="${navigationjs}"></script>

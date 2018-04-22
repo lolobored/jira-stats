@@ -82,7 +82,7 @@ public class WorklogEpicServiceImpl implements WorklogEpicService {
 
 							if (worklog.getCreated().isAfter(range.getStartDate()) && worklog.getCreated().isBefore(range.getEndDate())) {
 								BigInteger timeSpent = worklog.getTimeSpentSeconds();
-								// browse epic
+								// browse component
 								WorklogRange worklogRange = worklogList.getRangeForEntry(range.getLabel(), issue.getEpicTitle());
 								worklogRange.addTime(timeSpent.intValue());
 								worklogRange.addJiraIssue(issue.getKey());
