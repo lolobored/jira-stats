@@ -19,6 +19,7 @@ public class QueryBuilder {
       .append("ASC").append(space);
     jqlQuery.append("&startAt=").append(startAt);
     jqlQuery.append("&maxResults=").append(maximum);
+    jqlQuery.append("&fields=").append(JiraIssueFields.getListOfFields());
 
     return jqlQuery.toString();
   }

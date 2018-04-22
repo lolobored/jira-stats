@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
 
@@ -34,5 +35,16 @@ public class JiraIssueFields {
   // the related Epic key
   private String customfield_10940;
 
+	@JsonIgnore
+	public static String getListOfFields() {
+		StringBuilder result= new StringBuilder();
+		for (Field field : JiraIssueFields.class.getDeclaredFields()) {
+			if (result.length()!=0){
+				result.append(",");
+			}
+			result.append(field.getName());
+		}
 
+		return result.toString();
+	}
 }
