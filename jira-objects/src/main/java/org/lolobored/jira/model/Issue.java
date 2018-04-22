@@ -59,16 +59,22 @@ public class Issue {
 
 	public void setCreated(LocalDateTime created){
 		this.created= created;
-		this.createdMilliseconds= created.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		if (created!=null) {
+			this.createdMilliseconds = created.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
 	}
 
 	public void setResolved(LocalDateTime resolved){
 		this.resolved= resolved;
-		this.resolvedMilliseconds= resolved.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		if (resolved!=null) {
+			this.resolvedMilliseconds = resolved.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
 	}
 
 	public void setUpdated(LocalDateTime updated){
 		this.updated= updated;
-		this.updatedMilliseconds= updated.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		if (updated!=null) {
+			this.updatedMilliseconds = updated.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		}
 	}
 }
