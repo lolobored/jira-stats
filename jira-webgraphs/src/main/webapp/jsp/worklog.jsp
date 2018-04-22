@@ -108,6 +108,7 @@
 					'${share_per_epic_type_history_chart}',
 					'${share_per_epic_type_history_project_box}',
 					'${share_per_epic_type_history_range_type_box}',
+					'${share_per_epic_type_history_epic_name_box}',
 					'${share_per_epic_type_history_table}');
 			return control;
 		}
@@ -191,6 +192,8 @@
 	<div class="clear"></div>
 	<div id="${share_per_epic_type_history_range_type_box}" class="range_type_box push_box_further"></div>
 	<div id="${share_per_epic_type_history_project_box}" class="project_box"></div>
+	<div class="clear"></div>
+	<div id="${share_per_epic_type_history_epic_name_box}"  class="epic_name_box push_box_further "></div>
 	<div class="clear"></div>
 	<div id="${share_per_epic_type_history_chart}" class="chart"></div>
 	<div id="${share_per_epic_type_history_table}" class="table"></div>

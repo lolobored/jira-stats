@@ -82,6 +82,7 @@ public class WorklogController {
     modelMap.addAttribute("share_per_epic_type_history_range_type_box",
         "share_per_epic_type_history_range_type_box");
     modelMap.addAttribute("share_per_epic_type_history_range_box", "share_per_epic_type_history_range_box");
+    modelMap.addAttribute("share_per_epic_type_history_epic_name_box", "share_per_epic_type_history_epic_name_box");
     modelMap.addAttribute("share_per_epic_type_history_chart", "share_per_epic_type_history_chart");
     modelMap.addAttribute("share_per_epic_type_history_table", "share_per_epic_type_history_table");
     modelMap.addAttribute("share_per_epic_type_history_dashboard", "share_per_epic_type_history_dashboard");

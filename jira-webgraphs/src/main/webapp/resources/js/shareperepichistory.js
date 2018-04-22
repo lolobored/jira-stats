@@ -15,7 +15,7 @@
  *          range_type_div : the div name for the range type combobox
  * @returns {undefined}
  */
-function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, project_range_div, range_type_div, chart_table_div) {
+function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, project_range_div, range_type_div, epic_name_div, chart_table_div) {
 
 	// The data we will be working on look like this:
 	// ['Range Label', 'Range Type', 'Project', 'Bug', 'QA Task', 'Improvement', 'Kaizen', 'QA Task', 'Spike', 'Story', 'Task',
@@ -32,7 +32,7 @@ function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, projec
 	var range_column = 0;
 	var range_type_column = 1;
 	var project_range_column = 2;
-	var epic_type_column = 3;
+	var epic_name_column = 3;
 	var time_spent_column = 4;
 	var jira_search_column = 5;
 	var colors = [
@@ -43,7 +43,9 @@ function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, projec
 		'#990099',
 		'#0099C6',
 		'#DD4477',
-		'#66AA00'
+		'#66AA00',
+		'#268f8f',
+		'#D1BA53'
 	];
 
 
@@ -94,6 +96,23 @@ function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, projec
 		}
 	});
 
+	// then it's the epic name
+	var epicBox = new google.visualization.ControlWrapper({
+		'controlType': 'CategoryFilter',
+		'containerId': epic_name_div,
+		'options': {
+			'filterColumnIndex': epic_name_column,
+			'ui': {
+				'label': '',
+				'labelStacking': 'vertical',
+				'allowTyping': false,
+				'allowMultiple': true,
+				'allowNone': true,
+				'sortValues': true
+			}
+		}
+	});
+
 	// Now for the chart
 	// we want to have a chart here
 	var chart = new google.visualization.ChartWrapper({
@@ -131,155 +150,204 @@ function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, projec
 
 	// Establish dependencies, so that every time we change one combobox we update the others and drow dashboard
 	dashboard.bind(projectBox, rangeTypeBox);
-	dashboard.bind(rangeTypeBox, table);
+	dashboard.bind(rangeTypeBox, epicBox);
+	dashboard.bind(epicBox, table);
 	dashboard.draw(chartDataTable);
+	var initialData = table.getDataTable();
 
 	// Refresh the chart when a control has been used
 	google.visualization.events.addListener(table, 'ready', function () {
 
-		filteredData = table.getDataTable();
+		var otherColumnName = "Others";
+		currentData = table.getDataTable();
+		filteredData = currentData;
 
-		// push the lines into columns
-		var newTable = [];
+		var selectedValues = epicBox.getState()['selectedValues'];
+		// if no value is selected then consider
+		// every values are selected
+		if (selectedValues.length === 0) {
+			// explore every row to get eventual epics
+			for (var i = 0; i < currentData.getNumberOfRows(); i++) {
+				var epicName = currentData.getValue(i, epic_name_column);
+				alreadyExists = false;
+				for (var alreadyExistingEpic = 0; alreadyExistingEpic < selectedValues.length; alreadyExistingEpic++) {
+					if (selectedValues[alreadyExistingEpic] === epicName) {
+						alreadyExists = true;
+						break;
+					}
+				}
+				if (!alreadyExists) {
+					selectedValues.push(epicName);
+				}
+			}
+		}
+		var selectedTypeRange = rangeTypeBox.getState()['selectedValues'][0];
+		var selectedProject = projectBox.getState()['selectedValues'][0];
+		var found = false;
+
+		filteredData = new google.visualization.DataTable();
+		// copy columns
+		for (var i = 0; i < currentData.getNumberOfColumns(); i++) {
+			filteredData.addColumn(currentData.getColumnType(i), currentData.getColumnLabel(i))
+		}
+
+		// create header
 		var header = [];
 		var possibleColumns = [];
 		var alreadyExists;
-		// copy first 3 columns
+		var newTable = new google.visualization.DataTable();
+
+		// copy first 3 columns (range, range type and project)
 		for (var singleColumn = 0; singleColumn < 3; singleColumn++) {
-			header.push(filteredData.getColumnLabel(singleColumn));
+			newTable.addColumn(filteredData.getColumnType(singleColumn), filteredData.getColumnLabel(singleColumn));
 		}
-		// then we'll need to get every single possible columns by browsing
-		// values in the 'Issue Type' column
-		for (var singleLine = 0; singleLine < filteredData.getNumberOfRows(); singleLine++) {
-			var issueType = filteredData.getValue(singleLine, epic_type_column);
+		// explore every row to get eventual epics
+		for (var i = 0; i < currentData.getNumberOfRows(); i++) {
+			var epicName = currentData.getValue(i, epic_name_column);
 			alreadyExists = false;
 			for (var alreadyExistingColumn = 0; alreadyExistingColumn < possibleColumns.length; alreadyExistingColumn++) {
-				if (possibleColumns[alreadyExistingColumn] === issueType) {
+				if (possibleColumns[alreadyExistingColumn] === epicName) {
 					alreadyExists = true;
 					break;
 				}
 			}
 			if (!alreadyExists) {
-				possibleColumns.push(issueType);
+				newTable.addColumn('number', epicName);
+				newTable.addColumn('string', epicName + " jira search");
+				possibleColumns.push(epicName);
 			}
 		}
+		// push others
+		newTable.addColumn('number', otherColumnName);
+		newTable.addColumn('string', otherColumnName + " jira search");
 
-		// fill header
-		for (var i = 0; i < possibleColumns.length; i++) {
-			header.push(possibleColumns[i]);
-			// add jira search
-			header.push(possibleColumns[i] + " jira search");
-		}
+		// create rows
+		// each row is a range label
+		for (var i = 0; i < currentData.getNumberOfRows(); i++) {
+			if (selectedTypeRange === currentData.getValue(i, range_type_column)) {
 
-		newTable.push(header);
+				var range = currentData.getValue(i, range_column);
+				var found = false;
+				// chack the range is not already added
+				for (var j = 0; j < newTable.getNumberOfRows(); j++) {
+					if (newTable.getValue(j, range_column) === range) {
+						found = true;
+						break;
+					}
+				}
+				// create a new line
+				if (found !== true) {
 
-		var savedProcessed = "";
-		var newLine = [];
+					var rowNumber = newTable.addRow();
+					// create range, project and range type
+					for (var column = 0;
+							 column < 3;
+							 column++) {
 
-		var savedDetailed;
-		// processing new lines and trying to insert it into the right row
-		for (var singleLine = 0; singleLine < filteredData.getNumberOfRows(); singleLine++) {
-			var issueType = filteredData.getValue(singleLine, epic_type_column);
-			var timeSpent = filteredData.getValue(singleLine, time_spent_column);
-			var jiraSearch = filteredData.getValue(singleLine, jira_search_column);
-			// checking product + range type + range name is the same as the one before
-			// if not we will need to insert the row
-			var currentProcess = filteredData.getValue(singleLine, range_column) +
-					filteredData.getValue(singleLine, range_type_column) +
-					filteredData.getValue(singleLine, project_range_column);
-			if (currentProcess !== savedProcessed) {
-				if (singleLine !== 0) {
-					// push the details or standard we saved
-					newLine[newLine.length - 1] = savedDetailed;
-					found = false;
-					for (var lineNb = 0; lineNb < newTable.length; lineNb++) {
-						// if we already have something which as the same product
-						// range
-						// range label
-						if (newLine[0] === newTable[lineNb][0] && newLine[1] === newTable[lineNb][1] && newLine[2] === newTable[lineNb][2] && newLine[newLine.length - 1] === newTable[lineNb][newLine.length - 1]) {
-							found = true;
-							// we can merge the values here
-							for (var j = 4; j < newLine.length; j++) {
-								if (header[j].endsWith(" jira search") && newLine[j] !== "") {
-									newTable[lineNb][j] = newLine[j];
-								} else if (!header[j].endsWith(" jira search") && newLine[j] !== 0) {
-									newTable[lineNb][j] = newLine[j];
-								}
-							}
-							break;
+						newTable.setValue(rowNumber, column, currentData.getValue(i, column));
+					}
+					// create empty values
+					for (var column = 3;
+							 column < newTable.getNumberOfColumns();
+							 column++) {
+						if (newTable.getColumnType(column) === 'number') {
+							newTable.setValue(rowNumber, column, 0);
+						}
+						else {
+							newTable.setValue(rowNumber, column, '');
 						}
 					}
-					if (!found) {
-						newTable.push(newLine);
-					}
-				}
-				newLine = [];
-				// init new line
-				for (var i = 0; i < header.length; i++) {
-					if (header[i].endsWith(" jira search")) {
-						newLine.push('');
-					} else {
-						newLine.push(0);
-					}
-				}
-				newLine[0] = filteredData.getValue(singleLine, range_column);
-				newLine[1] = filteredData.getValue(singleLine, range_type_column);
-				newLine[2] = filteredData.getValue(singleLine, project_range_column);
 
+				}
 			}
+		}
 
-			for (var i = 0; i < header.length; i++) {
-				if (header[i] === issueType) {
-					newLine[i] = timeSpent;
-					newLine[i + 1] = jiraSearch;
+		// table is built
+		// we now need to fill it
+		for (var i = 0; i < chartDataTable.getNumberOfRows(); i++) {
+			var found = false;
+			for (var j = 0; j < selectedValues.length; j++) {
+
+				// check first if the row
+				// - epic is the same as one of those selected
+				// - range type is the same
+				// - project is the same
+				if (selectedValues[j] === chartDataTable.getValue(i, epic_name_column)
+					&& selectedTypeRange === chartDataTable.getValue(i, range_type_column)
+					&& selectedProject === chartDataTable.getValue(i, project_range_column)) {
+					for (var rowNewTable = 0;
+							 rowNewTable < newTable.getNumberOfRows();
+							 rowNewTable++) {
+						// if the line for the range is the correct one
+						if (chartDataTable.getValue(i, range_column) === newTable.getValue(rowNewTable, range_column)) {
+							for (var column = 0;
+									 column < newTable.getNumberOfColumns();
+									 column++) {
+								if (newTable.getColumnLabel(column) === chartDataTable.getValue(i, epic_name_column)) {
+									newTable.setValue(rowNewTable, column, chartDataTable.getValue(i, time_spent_column));
+									// set the jira search
+									newTable.setValue(rowNewTable, column + 1, chartDataTable.getValue(i, time_spent_column + 1));
+									found = true;
+									break;
+								}
+							}
+							if (found === true) {
+								break;
+							}
+						}
+					}
+				}
+
+				if (found === true) {
 					break;
 				}
 			}
 
-			savedProcessed = currentProcess;
-		}
-
-		// we still need to insert the new line
-		// push the details or standard we saved
-		newLine[newLine.length - 1] = savedDetailed;
-		found = false;
-		for (var lineNb = 0; lineNb < newTable.length; lineNb++) {
-			// if we already have something which as the same product
-			// range
-			// range label
-			if (newLine[0] === newTable[lineNb][0] && newLine[1] === newTable[lineNb][1] && newLine[2] === newTable[lineNb][2] && newLine[newLine.length - 1] === newTable[lineNb][newLine.length - 1]) {
-				found = true;
-				// we can merge the values here
-				for (var j = 4; j < newLine.length; j++) {
-					if (header[j].endsWith(" jira search") && newLine[j] !== "") {
-						newTable[lineNb][j] = newLine[j];
-					} else if (!header[j].endsWith(" jira search") && newLine[j] !== 0) {
-						newTable[lineNb][j] = newLine[j];
+			// if not found add it to the "Others"
+			if (found === false) {
+				for (var rowNewTable = 0;
+						 rowNewTable < newTable.getNumberOfRows();
+						 rowNewTable++) {
+					// if the line for the range is the correct one
+					if (chartDataTable.getValue(i, range_column) === newTable.getValue(rowNewTable, range_column)
+						&& selectedTypeRange === chartDataTable.getValue(i, range_type_column)
+						&& selectedProject === chartDataTable.getValue(i, project_range_column)) {
+						var time = newTable.getValue(rowNewTable, newTable.getNumberOfColumns() - 2);
+						time = time + chartDataTable.getValue(i, time_spent_column);
+						newTable.setValue(rowNewTable, newTable.getNumberOfColumns() - 2, time);
+						// get the jira search
+						var jiraSearch=newTable.getValue(rowNewTable, newTable.getNumberOfColumns() - 1);
+						if (jiraSearch === ''){
+							newTable.setValue(rowNewTable, newTable.getNumberOfColumns() - 1, chartDataTable.getValue(i, jira_search_column));
+						}
+						else{
+							var existing = chartDataTable.getValue(i, jira_search_column);
+							var jiraSearches= [];
+							jiraSearches.push(existing);
+							jiraSearches.push(jiraSearch);
+							newTable.setValue(rowNewTable, newTable.getNumberOfColumns() - 1,
+																getJiraUrls(jiraSearches));
+						}
+						break;
 					}
+
 				}
-				break;
 			}
-		}
-		if (!found) {
-			newTable.push(newLine);
 		}
 
 		var viewColumns = [0];
 		// we want to get the time spent only
-		for (var i = 3; i < header.length - 1; i++) {
-			if (!header[i].endsWith(" jira search")) {
+		for (var i = 3; i < newTable.getNumberOfColumns(); i++) {
+			if (!newTable.getColumnLabel(i).endsWith(" jira search")) {
 				viewColumns.push(i);
 			}
 		}
 
-		// apply the filter to the view
-		var dataTable = google.visualization.arrayToDataTable(newTable);
-
-		var view = new google.visualization.DataView(dataTable);
+		var view = new google.visualization.DataView(newTable);
 		view.setColumns(viewColumns);
 
 		// Draw chart
-		chart.setDataTable(dataTable);
+		chart.setDataTable(newTable);
 		chart.setView(view.toJSON());
 
 		chart.draw();
@@ -307,4 +375,26 @@ function drawSharePerEpicHistory(jsonData, dashboard_name_div, chart_div, projec
 	google.visualization.events.addListener(chart, 'select', selectListener);
 
 	return projectBox;
+}
+
+/*****************************************************************************************************************************************************
+ * Returns the appropriate jira search It will use the jira url start and close as well as the list of issues
+ */
+function getJiraUrls(issues) {
+	var concat = "";
+	for (var i = 0; i < issues.length; i++) {
+		var startInKeys = issues[i].indexOf("in(") + "in(".length;
+		var closeInKeys = issues[i].indexOf(")", startInKeys);
+		if (i === 0) {
+			var jiraStartSearchUrl = issues[i].slice(0, startInKeys);
+			var jiraClosingSearchUrl = issues[i].slice(closeInKeys);
+			concat += jiraStartSearchUrl;
+		}
+		if (i !== 0) {
+			concat += ",";
+		}
+		concat += issues[i].slice(startInKeys, closeInKeys);
+	}
+	concat += jiraClosingSearchUrl;
+	return concat;
 }
