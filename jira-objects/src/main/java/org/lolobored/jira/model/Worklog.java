@@ -23,7 +23,7 @@ public class Worklog {
   @Setter(AccessLevel.NONE)
   private LocalDateTime created;
   @Setter(AccessLevel.NONE)
-  private long createdMilliseconds;
+  private Long createdMilliseconds;
   private BigInteger timeSpentSeconds;
   private String author;
 

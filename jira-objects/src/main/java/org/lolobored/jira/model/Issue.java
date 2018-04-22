@@ -43,19 +43,19 @@ public class Issue {
 	@Setter(AccessLevel.NONE)
 	private LocalDateTime created;
 	@Setter(AccessLevel.NONE)
-	private long createdMilliseconds;
+	private Long createdMilliseconds;
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@Setter(AccessLevel.NONE)
 	private LocalDateTime resolved;
 	@Setter(AccessLevel.NONE)
-	private long resolvedMilliseconds;
+	private Long resolvedMilliseconds;
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@Setter(AccessLevel.NONE)
 	private LocalDateTime updated;
 	@Setter(AccessLevel.NONE)
-	private long updatedMilliseconds;
+	private Long updatedMilliseconds;
 
 	public void setCreated(LocalDateTime created){
 		this.created= created;
