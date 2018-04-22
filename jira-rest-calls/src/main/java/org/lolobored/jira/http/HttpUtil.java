@@ -216,7 +216,7 @@ public class HttpUtil {
 			}
 
 			// Retrieving the response from the HTTP server
-			response = httpClient.execute(httpOperation);
+ 			response = httpClient.execute(httpOperation);
 			httpResponse = IOUtils.toString(response.getEntity().getContent());
 			IOUtils.closeQuietly(response.getEntity().getContent());
 

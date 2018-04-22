@@ -1,4 +1,4 @@
-package org.lolobored.jira.services.backlog.component;
+package org.lolobored.jira.services.backlog.component.opening;
 
 import org.lolobored.jira.dao.data.DAOHeader;
 import org.lolobored.jira.dao.data.DAORow;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class BacklogComponentServiceImpl implements BacklogComponentService {
+public class BacklogOpeningComponentServiceImpl implements BacklogOpeningComponentService {
 
 	@Autowired
 	ElasticSearchService elasticSearchService;
@@ -29,7 +29,7 @@ public class BacklogComponentServiceImpl implements BacklogComponentService {
 	JiraProperties jiraProperties;
 
 	@Override
-	public DAOTable getBacklogPerComponent() {
+	public DAOTable getBacklogOpeningPerComponent() {
 		String jiraSearchAppend= " jira search";
 		DAOTable result = new DAOTable();
 		BacklogList backlogList;

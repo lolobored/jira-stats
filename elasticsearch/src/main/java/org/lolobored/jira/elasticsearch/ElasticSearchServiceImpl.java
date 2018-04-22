@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.lolobored.jira.elasticsearch.repository.IssueRepository;
 import org.lolobored.jira.elasticsearch.repository.SprintRepository;
+import org.lolobored.jira.http.HttpException;
+import org.lolobored.jira.http.HttpUtil;
 import org.lolobored.jira.model.Issue;
 import org.lolobored.jira.model.Sprint;
 import org.slf4j.Logger;
@@ -19,7 +21,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ElasticSearchServiceImpl implements ElasticSearchService {
@@ -35,6 +39,17 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 
 	private static ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule())
 		.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+	@Override
+	public void setMaxResultWindow(String url, Integer maxResult) throws HttpException {
+		HttpUtil httpUtil = HttpUtil.getInstance(false);
+		String json= "{\n" +
+			"  \"index.max_result_window\" : \""+maxResult+"\"\n" +
+			"}";
+		Map<String, String> header= new HashMap<>();
+		header.put("Content-Type", "application/json;charset=UTF-8");
+		httpUtil.put(url+"/jira/_settings", json, header);
+	}
 
 
 	@Override
@@ -109,6 +124,52 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 		for (int i=1; i< page.getTotalPages(); i++){
 			pageRequest = pageRequest.next();
 			page= issueRepository.findByCreatedMillisecondsBetweenAndProjectAndIssueType(pageRequest,  start, end, project, Issue.Bugs);
+			result.addAll(page.getContent()) ;
+		}
+		return result;
+	}
+
+	@Override
+	public List<Issue> getBugsResolvedWithinPeriod(LocalDateTime startDate, LocalDateTime endDate, String project, int maximum){
+		List<Issue> result= new ArrayList();
+		Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
+		long start= startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		long end= endDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		Page<Issue> page= issueRepository.findByResolvedMillisecondsBetweenAndProjectAndIssueType(pageRequest, start, end, project, Issue.Bugs);
+		result.addAll(page.getContent()) ;
+		for (int i=1; i< page.getTotalPages(); i++){
+			pageRequest = pageRequest.next();
+			page= issueRepository.findByResolvedMillisecondsBetweenAndProjectAndIssueType(pageRequest,  start, end, project, Issue.Bugs);
+			result.addAll(page.getContent()) ;
+		}
+		return result;
+	}
+
+	@Override
+	public List<Issue> getBugsOpenedBefore(LocalDateTime startDate, String project, int maximum){
+		List<Issue> result= new ArrayList();
+		Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
+		long start= startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		Page<Issue> page= issueRepository.findByCreatedMillisecondsBeforeAndProjectAndIssueType(pageRequest, start, project, Issue.Bugs);
+		result.addAll(page.getContent()) ;
+		for (int i=1; i< page.getTotalPages(); i++){
+			pageRequest = pageRequest.next();
+			page= issueRepository.findByCreatedMillisecondsBeforeAndProjectAndIssueType(pageRequest,  start, project, Issue.Bugs);
+			result.addAll(page.getContent()) ;
+		}
+		return result;
+	}
+
+	@Override
+	public List<Issue> getBugsResolvedBefore(LocalDateTime startDate, String project, int maximum){
+		List<Issue> result= new ArrayList();
+		Pageable pageRequest= new PageRequest(0, maximum, Sort.Direction.ASC, "key.keyword");
+		long start= startDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		Page<Issue> page= issueRepository.findByResolvedMillisecondsBeforeAndProjectAndIssueType(pageRequest, start, project, Issue.Bugs);
+		result.addAll(page.getContent()) ;
+		for (int i=1; i< page.getTotalPages(); i++){
+			pageRequest = pageRequest.next();
+			page= issueRepository.findByResolvedMillisecondsBeforeAndProjectAndIssueType(pageRequest,  start, project, Issue.Bugs);
 			result.addAll(page.getContent()) ;
 		}
 		return result;

@@ -15,7 +15,7 @@
  *          range_type_div : the div name for the range type combobox
  * @returns {undefined}
  */
-function drawBacklogOpeningPerComponent(jsonData, dashboard_name_div, chart_div, project_range_div, range_type_div, chart_table_div) {
+function drawBacklogPerComponent(jsonData, dashboard_name_div, chart_div, project_range_div, range_type_div, chart_table_div) {
 
 
 	// set up columns number

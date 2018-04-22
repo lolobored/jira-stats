@@ -28,6 +28,7 @@
 
 		function initCharts() {
 
+			backlog_per_component_control = drawChartBacklogPerComponent();
 			backlog_opening_per_component_control = drawChartBacklogOpeningPerComponent();
 
 			backlog_opening_per_component_control.setState({'selectedValues': [sessionStorage.selectedProject]});
@@ -54,15 +55,28 @@
 
 
 		// draw calendar
+		function drawChartBacklogPerComponent() {
+
+			control = drawBacklogPerComponent(${backlog__per_component}, '${backlog__per_component_dashboard}',
+				'${backlog__per_component_chart}',
+				'${backlog__per_component_project_box}',
+				'${backlog__per_component_range_type_box}',
+				'${backlog__per_component_table}');
+			return control;
+		}
+
+		// draw calendar
 		function drawChartBacklogOpeningPerComponent() {
 
-			control = drawBacklogOpeningPerComponent(${backlog_opening_per_component}, '${backlog_opening_per_component_dashboard}',
+			control = drawBacklogPerComponent(${backlog_opening_per_component}, '${backlog_opening_per_component_dashboard}',
 				'${backlog_opening_per_component_chart}',
 				'${backlog_opening_per_component_project_box}',
 				'${backlog_opening_per_component_range_type_box}',
 				'${backlog_opening_per_component_table}');
 			return control;
 		}
+
+
 
 	</script>
 
@@ -96,6 +110,17 @@
 </div>
 
 <br> <br> <br> <br>
+<!-- Share per issue type -->
+<div id="${backlog__per_component_dashboard}">
+	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
+		Bugs Backlog</h2>
+	<div class="clear"></div>
+	<div id="${backlog__per_component_project_box}" class="range_type_box push_box"></div>
+	<div id="${backlog__per_component_range_type_box}" class="resource_box "></div>
+	<div class="clear"></div>
+	<div id="${backlog__per_component_chart}"></div>
+	<div id="${backlog__per_component_table}" class="table"></div>
+</div>
 <!-- Share per issue type -->
 <div id="${backlog_opening_per_component_dashboard}">
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">

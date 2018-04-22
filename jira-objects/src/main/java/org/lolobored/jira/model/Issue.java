@@ -28,6 +28,8 @@ public class Issue {
 	@Setter(AccessLevel.NONE)
 	@Getter(AccessLevel.NONE)
 	public static final String Bugs = "Bug";
+	public static final String ClosedNotImplementedStatus= "Closed Not Implemented";
+
 	@Id
 	private String key;
 	private String project;
@@ -80,5 +82,15 @@ public class Issue {
 		if (updated!=null) {
 			this.updatedMilliseconds = updated.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 		}
+	}
+
+	@Override
+	public boolean equals(Object obj){
+		if (obj instanceof Issue){
+			Issue issue = (Issue) obj;
+			return issue.getKey().equals(this.getKey());
+		}
+		return false;
+
 	}
 }

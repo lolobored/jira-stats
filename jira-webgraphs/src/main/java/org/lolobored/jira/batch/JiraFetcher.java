@@ -9,6 +9,7 @@ import org.lolobored.jira.model.Issue;
 import org.lolobored.jira.model.Sprint;
 import org.lolobored.jira.model.Worklog;
 import org.lolobored.jira.objects.*;
+import org.lolobored.jira.webgraphs.ApplicationProperties;
 import org.lolobored.jira.webgraphs.JiraProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,8 @@ public class JiraFetcher {
 
 	@Autowired
   JiraProperties jiraProperties;
+  @Autowired
+  ApplicationProperties applicationProperties;
 
   @Autowired
   JiraService jiraService;
@@ -46,6 +49,7 @@ public class JiraFetcher {
     String[] projectList = projects.split(";");
     String boards = jiraProperties.getBoard();
     String[] boardList = boards.split(";");
+    int totalJiraIssues=0;
 
     for (int i=0; i< projectList.length; i++) {
 
@@ -57,6 +61,8 @@ public class JiraFetcher {
         jiraProperties.getUsername(),
         jiraProperties.getPassword(),
         Integer.parseInt(jiraProperties.getMaximum()));
+
+      totalJiraIssues= jiraIssues.size();
 
       // insert issues in elasticsearch
       for (JiraIssue jiraIssue : jiraIssues) {
@@ -113,6 +119,9 @@ public class JiraFetcher {
           elasticSearchService.insertIssue(issue);
         }
       }
+
+      // set the max result for elastic search (quick workaround)
+      elasticSearchService.setMaxResultWindow(applicationProperties.getUri(), Integer.valueOf(applicationProperties.getMaxindexsearch()));
 
       // now let's replace component by it's name
       List<Issue> issues = elasticSearchService.getAllIssuesPerProject(project, Integer.parseInt(jiraProperties.getMaximum()));

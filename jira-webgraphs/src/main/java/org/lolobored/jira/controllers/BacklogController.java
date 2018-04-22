@@ -2,7 +2,8 @@ package org.lolobored.jira.controllers;
 
 import org.lolobored.jira.ProcessException;
 import org.lolobored.jira.dao.data.DAOTable;
-import org.lolobored.jira.services.backlog.component.BacklogComponentService;
+import org.lolobored.jira.services.backlog.component.opening.BacklogOpeningComponentService;
+import org.lolobored.jira.services.backlog.component.total.BacklogComponentService;
 import org.lolobored.jira.webgraphs.JiraProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,8 +20,11 @@ import java.util.TreeMap;
 @RequestMapping(value = {"/backlog"})
 public class BacklogController {
 
-  @Autowired
-  BacklogComponentService backlogComponentService;
+	@Autowired
+	BacklogOpeningComponentService backlogOpeningComponentService;
+
+	@Autowired
+	BacklogComponentService backlogComponentService;
 
 	@Autowired
   JiraProperties jiraProperties;
@@ -29,7 +33,19 @@ public class BacklogController {
   @RequestMapping(method = RequestMethod.GET)
   public String retrieveWorklogStatistics(ModelMap modelMap, HttpServletRequest httpRequest) throws ProcessException {
 
-    DAOTable backlog_opening_per_component = backlogComponentService.getBacklogPerComponent();
+		DAOTable backlog__per_component = backlogComponentService.getBacklogPerComponent();
+		// filling the data which we will use in the JS page
+		modelMap.addAttribute("backlog__per_component", backlog__per_component.toJSON());
+		// filling the div id which we will use so that it's replaced at
+		// everyplace we use it
+		modelMap.addAttribute("backlog__per_component_project_box", "backlog__per_component_project_box");
+		modelMap.addAttribute("backlog__per_component_range_type_box", "backlog__per_component_range_type_box");
+		modelMap.addAttribute("backlog__per_component_chart", "backlog__per_component_chart");
+		modelMap.addAttribute("backlog__per_component_table", "backlog__per_component_table");
+		modelMap.addAttribute("backlog__per_component_dashboard", "backlog__per_component_dashboard");
+
+
+		DAOTable backlog_opening_per_component = backlogOpeningComponentService.getBacklogOpeningPerComponent();
     // filling the data which we will use in the JS page
     modelMap.addAttribute("backlog_opening_per_component", backlog_opening_per_component.toJSON());
     // filling the div id which we will use so that it's replaced at
@@ -39,6 +55,7 @@ public class BacklogController {
     modelMap.addAttribute("backlog_opening_per_component_chart", "backlog_opening_per_component_chart");
     modelMap.addAttribute("backlog_opening_per_component_table", "backlog_opening_per_component_table");
     modelMap.addAttribute("backlog_opening_per_component_dashboard", "backlog_opening_per_component_dashboard");
+
     return "/backlog";
   }
 
