@@ -57,6 +57,11 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
 		issueRepository.save(issue);
 	}
 
+	@Override
+	public void removeIssue(String key){
+		issueRepository.deleteById(key);
+	}
+
   @Override
 	public void insertSprint(Sprint sprint)  {
     sprintRepository.save(sprint);

@@ -20,8 +20,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class JiraFetcher {
@@ -49,7 +48,7 @@ public class JiraFetcher {
     String[] projectList = projects.split(";");
     String boards = jiraProperties.getBoard();
     String[] boardList = boards.split(";");
-    int totalJiraIssues=0;
+    Set<String> jiraIssueKeys = new HashSet<>() ;
 
     for (int i=0; i< projectList.length; i++) {
 
@@ -62,10 +61,10 @@ public class JiraFetcher {
         jiraProperties.getPassword(),
         Integer.parseInt(jiraProperties.getMaximum()));
 
-      totalJiraIssues= jiraIssues.size();
 
       // insert issues in elasticsearch
       for (JiraIssue jiraIssue : jiraIssues) {
+        jiraIssueKeys.add(jiraIssue.getKey());
         Issue issue = new Issue();
         LocalDateTime lastUpdate = jiraIssue.getFields().getUpdated().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         Issue currentIssue = elasticSearchService.getIssue(jiraIssue.getKey());
@@ -123,9 +122,16 @@ public class JiraFetcher {
       // set the max result for elastic search (quick workaround)
       elasticSearchService.setMaxResultWindow(applicationProperties.getUri(), Integer.valueOf(applicationProperties.getMaxindexsearch()));
 
-      // now let's replace component by it's name
+      // now let's replace epic by it's name
+      // and allow to remove the issues that are no longer in Jira
       List<Issue> issues = elasticSearchService.getAllIssuesPerProject(project, Integer.parseInt(jiraProperties.getMaximum()));
       for (Issue issue : issues) {
+
+        // remove if no longer in Jira
+        if (!jiraIssueKeys.contains(issue.getKey())){
+          elasticSearchService.removeIssue(issue.getKey());
+          continue;
+        }
 
         if (issue.getEpicIssue() != null) {
           Issue epicIssue = elasticSearchService.getIssue(issue.getEpicIssue());

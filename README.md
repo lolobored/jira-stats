@@ -47,6 +47,7 @@ To be added:
 In order to configure the project, edit the following properties files:
 * jira-webgraphs/src/main/ressources/application.properties:
   * spring.data.jest.uri : the url for the elastic search instance
+  * spring.data.jest.maxindexsearch : max index search parameter for Elastic Search
   * server.port : the port used by the embedded tomcat server
 * jira-webgraphs/src/main/ressources/jira.properties:
   * jira.baseurl : the url for the jira instance

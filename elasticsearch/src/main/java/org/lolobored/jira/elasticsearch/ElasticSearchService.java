@@ -14,6 +14,8 @@ public interface ElasticSearchService {
 
 	public void insertIssue(Issue issue);
 
+	public void removeIssue(String key);
+
 	public List<Issue> getAllIssuesPerProject(String project, int maximum);
 
 	public Issue getIssue(String jiraKey);
