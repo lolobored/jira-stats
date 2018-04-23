@@ -56,6 +56,8 @@ public class TeamlogServiceImpl implements TeamlogService {
 
 		// get all day in current year and last year
 		LocalDateTime now = LocalDateTime.now();
+		// add 1 day to get today's information as well
+		now= now.plusDays(1);
 
 		for (String project : projectList) {
 			teamlogList= new TeamlogList();
