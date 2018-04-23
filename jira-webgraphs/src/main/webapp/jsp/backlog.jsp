@@ -32,7 +32,9 @@
 			backlog_opening_per_component_control = drawChartBacklogOpeningPerComponent();
 			backlog_average_fix_time_per_component_control = drawChartBacklogAverageFixTimePerComponent();
 
+			backlog_per_component_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 			backlog_opening_per_component_control.setState({'selectedValues': [sessionStorage.selectedProject]});
+			backlog_average_fix_time_per_component_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 
 		}
 
