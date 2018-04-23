@@ -11,8 +11,8 @@ public class BacklogRange {
   private Integer count;
   private List<String> jiraIssues= new ArrayList<>();
 
-  public void addCount(){
-    count+=1;
+  public void incrementCount(int count){
+    this.count+=count;
   }
 
   public void addJiraIssue(String key){

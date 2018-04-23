@@ -30,6 +30,7 @@
 
 			backlog_per_component_control = drawChartBacklogPerComponent();
 			backlog_opening_per_component_control = drawChartBacklogOpeningPerComponent();
+			backlog_average_fix_time_per_component_control = drawChartBacklogAverageFixTimePerComponent();
 
 			backlog_opening_per_component_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 
@@ -54,7 +55,7 @@
 		}
 
 
-		// draw calendar
+		// draw chart
 		function drawChartBacklogPerComponent() {
 
 			control = drawBacklogPerComponent(${backlog__per_component}, '${backlog__per_component_dashboard}',
@@ -65,7 +66,7 @@
 			return control;
 		}
 
-		// draw calendar
+		// draw chart
 		function drawChartBacklogOpeningPerComponent() {
 
 			control = drawBacklogPerComponent(${backlog_opening_per_component}, '${backlog_opening_per_component_dashboard}',
@@ -76,6 +77,16 @@
 			return control;
 		}
 
+		// draw calendar
+		function drawChartBacklogAverageFixTimePerComponent() {
+
+			control = drawBacklogPerComponent(${backlog_average_fix_per_component}, '${backlog_average_fix_per_component_dashboard}',
+					'${backlog_average_fix_per_component_chart}',
+					'${backlog_average_fix_per_component_project_box}',
+					'${backlog_average_fix_per_component_range_type_box}',
+					'${backlog_average_fix_per_component_table}');
+			return control;
+		}
 
 
 	</script>
@@ -110,7 +121,7 @@
 </div>
 
 <br> <br> <br> <br>
-<!-- Share per issue type -->
+<!-- Backlog -->
 <div id="${backlog__per_component_dashboard}">
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Bugs Backlog</h2>
@@ -121,7 +132,7 @@
 	<div id="${backlog__per_component_chart}"></div>
 	<div id="${backlog__per_component_table}" class="table"></div>
 </div>
-<!-- Share per issue type -->
+<!-- Opening backlog -->
 <div id="${backlog_opening_per_component_dashboard}">
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Bugs Opening Per Component</h2>
@@ -131,6 +142,17 @@
 	<div class="clear"></div>
 	<div id="${backlog_opening_per_component_chart}"></div>
 	<div id="${backlog_opening_per_component_table}" class="table"></div>
+</div>
+<!-- Average fix time -->
+<div id="${backlog_average_fix_per_component_dashboard}">
+	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
+		Average Fix Time Per Component (in working days)</h2>
+	<div class="clear"></div>
+	<div id="${backlog_average_fix_per_component_project_box}" class="range_type_box push_box"></div>
+	<div id="${backlog_average_fix_per_component_range_type_box}" class="resource_box "></div>
+	<div class="clear"></div>
+	<div id="${backlog_average_fix_per_component_chart}"></div>
+	<div id="${backlog_average_fix_per_component_table}" class="table"></div>
 </div>
 
 <script type="text/javascript" src="${navigationjs}"></script>

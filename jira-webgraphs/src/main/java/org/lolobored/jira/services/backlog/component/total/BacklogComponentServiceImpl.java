@@ -108,7 +108,7 @@ public class BacklogComponentServiceImpl implements BacklogComponentService {
 
 							// update the value in the stored keys
 							BacklogRange backlogRange = backlogList.getRangeForEntry(range.getLabel(), component);
-							backlogRange.addCount();
+							backlogRange.incrementCount(1);
 							backlogRange.addJiraIssue(issue.getKey());
 
 						}
