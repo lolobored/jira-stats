@@ -155,14 +155,22 @@ function drawBacklogPerComponent(jsonData, dashboard_name_div, chart_div, projec
 		// get the selection
 		var selection = chart.getChart().getSelection();
 		var currentFilteredData = chart.getDataTable();
-		// position is:
-		// 1+ selection[0].column * 2 + 1
-		// 1 becaue we start the view with a label
-		// then selection[0].column * 2 because the view has only the numbers
-		// no jira search in it
-		// +1 to get the jira search
-		if (currentFilteredData.getColumnLabel(1 + selection[0].column * 2 + 1).endsWith(" jira search")) {
-			window.open(currentFilteredData.getValue(selection[0].row, 1 + selection[0].column * 2 + 1), '_blank');
+		var count=0;
+		// we want to get the COUNT only
+		for (var column = 3; column < filteredData.getNumberOfColumns() ; column++) {
+			if (!filteredData.getColumnLabel(column).endsWith(" jira search")) {
+				// check there is at least one entry in there
+				// 0 entries would be other projects
+					if (filteredData.getValue(selection[0].row, column) !== 0){
+						count++;
+					}
+			}
+			else{
+				if (count ===selection[0].column){
+					window.open(currentFilteredData.getValue(selection[0].row, column), '_blank');
+					break;
+				}
+			}
 		}
 
 	};
