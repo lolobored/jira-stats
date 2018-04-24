@@ -109,6 +109,7 @@ public class RangeUtil {
       }
       current++;
     }
+    Collections.sort(result);
     return result;
   }
 
