@@ -8,10 +8,11 @@
 	<meta http-equiv="Cache-control" content="public">
 	<title>Jira Statistics</title>
 	<spring:url value="/resources/css/graph.css" var="graphcss"/>
-	<!-- From https://www.creativejuiz.fr/blog/tutoriels/creer-menu-sticky-avec-javascript-css#sticky-back -->
+	<spring:url value="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" var="awesomefontscss"/>
 	<spring:url value="/resources/js/navigation-bar.js" var="navigationjs"/>
 	<spring:url value="/resources/js/linechart.js" var="linechartjs"/>
 	<link type="text/css" rel="stylesheet" href="${graphcss}"/>
+	<link type="text/css" rel="stylesheet" href="${awesomefontscss}"/>
 	<script type="text/javascript" src="${linechartjs}"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
@@ -128,6 +129,10 @@
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Bugs Backlog</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">Follow the bug backlog</p>
+		<p class="text2">Bugs are sorted by components for the project</p>
+	</div>
 	<div id="${backlog__per_component_project_box}" class="range_type_box push_box"></div>
 	<div id="${backlog__per_component_range_type_box}" class="resource_box "></div>
 	<div class="clear"></div>
@@ -139,6 +144,10 @@
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Bugs Opening Per Component</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">Follow the bug's opening per range</p>
+		<p class="text2">Bugs are sorted by components for the project</p>
+	</div>
 	<div id="${backlog_opening_per_component_project_box}" class="range_type_box push_box"></div>
 	<div id="${backlog_opening_per_component_range_type_box}" class="resource_box "></div>
 	<div class="clear"></div>
@@ -150,6 +159,10 @@
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Average Fix Time Per Component (in working days)</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">Follow the average fix time in work days for bugs</p>
+		<p class="text2">Bugs are sorted by components for the project</p>
+	</div>
 	<div id="${backlog_average_fix_per_component_project_box}" class="range_type_box push_box"></div>
 	<div id="${backlog_average_fix_per_component_range_type_box}" class="resource_box "></div>
 	<div class="clear"></div>

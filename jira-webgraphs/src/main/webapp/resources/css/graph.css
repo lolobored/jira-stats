@@ -204,16 +204,25 @@ HR {
     margin-left: 150px;
 }
 
-.note{
-    background: #ffffff;
-    color: #a44435;
-    border-color: #a44435;
-    border: solid;
-    border-width: 2px 2px 2px 2px;
-    font-size: 14px;
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    margin: auto;
+    text-align: left;
     margin-left: 150px;
-    width: 400px;
 }
+
+.text {
+    color: black;
+    font-size: 14px;
+    margin: 20px;
+}
+.text2 {
+    color: grey;
+    font-size: 12px;
+    margin: 20px;
+}
+
 
 .push_box_further {
     margin-left: 370px;

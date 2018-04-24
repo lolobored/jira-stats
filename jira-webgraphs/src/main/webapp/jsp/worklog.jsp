@@ -8,11 +8,13 @@
 	<meta http-equiv="Cache-control" content="public">
 	<title>Jira Statistics</title>
 	<spring:url value="/resources/css/graph.css" var="graphcss"/>
+	<spring:url value="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" var="awesomefontscss"/>
 	<!-- From https://www.creativejuiz.fr/blog/tutoriels/creer-menu-sticky-avec-javascript-css#sticky-back -->
 	<spring:url value="/resources/js/navigation-bar.js" var="navigationjs"/>
 	<spring:url value="/resources/js/piechart.js" var="piechartjs"/>
 	<spring:url value="/resources/js/areagraphhistory.js" var="areagraphhistoryjs"/>
 	<link type="text/css" rel="stylesheet" href="${graphcss}"/>
+	<link type="text/css" rel="stylesheet" href="${awesomefontscss}"/>
 	<script type="text/javascript" src="${piechartjs}"></script>
 	<script type="text/javascript" src="${areagraphhistoryjs}"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -172,6 +174,10 @@
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Share per category in working days</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">Repartition of tasks per main categories</p>
+		<p class="text2">Unit is in work days</p>
+	</div>
 	<div id="${share_per_category_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_category_project_box}" class="project_box"></div>
 	<div class="clear"></div>
@@ -186,6 +192,10 @@
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Share per category history in working days</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">History of the repartition of tasks per main categories</p>
+		<p class="text2">Unit is in work days</p>
+	</div>
 	<div id="${share_per_category_history_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_category_history_project_box}" class="project_box"></div>
 	<div class="clear"></div>
@@ -200,6 +210,10 @@
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Share per component type in working days</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">Repartition of tasks per components</p>
+		<p class="text2">Unit is in work days</p>
+	</div>
 	<div id="${share_per_component_type_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_component_type_project_box}" class="project_box"></div>
 	<div class="clear"></div>
@@ -214,6 +228,10 @@
 	<h2 style="float: left; width: 370px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Share per component type history in working days</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">History of the repartition of tasks per components</p>
+		<p class="text2">Unit is in work days</p>
+	</div>
 	<div id="${share_per_component_type_history_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_component_type_history_project_box}" class="project_box"></div>
 	<div class="clear"></div>
@@ -228,6 +246,10 @@
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Share per epic type in working days</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">Repartition of tasks per epics</p>
+		<p class="text2">Unit is in work days</p>
+	</div>
 	<div id="${share_per_epic_type_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_epic_type_project_box}" class="project_box"></div>
 	<div class="clear"></div>
@@ -242,6 +264,10 @@
 	<h2 style="float: left; width: 370px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Share per epic type history in working days</h2>
 	<div class="clear"></div>
+	<div class="card">
+		<p class="text">History of the repartition of tasks per epics</p>
+		<p class="text2">Unit is in work days</p>
+	</div>
 	<div id="${share_per_epic_type_history_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_epic_type_history_project_box}" class="project_box"></div>
 	<div class="clear"></div>
