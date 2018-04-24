@@ -1,4 +1,4 @@
-package org.lolobored.jira.services.worklog.component;
+package org.lolobored.jira.services.worklog.category;
 
 import org.apache.commons.lang.StringUtils;
 import org.lolobored.jira.dao.data.DAOHeader;
@@ -9,11 +9,12 @@ import org.lolobored.jira.model.Component;
 import org.lolobored.jira.model.Issue;
 import org.lolobored.jira.model.Sprint;
 import org.lolobored.jira.model.Worklog;
+import org.lolobored.jira.properties.JiraProperties;
+import org.lolobored.jira.properties.ProjectMainLabelsProperties;
 import org.lolobored.jira.ranges.Range;
 import org.lolobored.jira.ranges.RangeUtil;
 import org.lolobored.jira.services.worklog.store.WorklogList;
 import org.lolobored.jira.services.worklog.store.WorklogRange;
-import org.lolobored.jira.properties.JiraProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class WorklogComponentServiceImpl implements WorklogComponentService {
+public class WorklogCategoryServiceImpl implements WorklogCategoryService {
 
   @Autowired
   ElasticSearchService elasticSearchService;
@@ -31,8 +32,11 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
   @Autowired
   JiraProperties jiraProperties;
 
+  @Autowired
+  ProjectMainLabelsProperties projectMainLabelsProperties;
+
   @Override
-  public DAOTable getSharedLoggedTimePerComponent() {
+  public DAOTable getSharedLoggedTimePerCategory() {
     DAOTable result = new DAOTable();
     WorklogList worklogList ;
     // create the header
@@ -42,7 +46,7 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
     daoHeader.addHeader(DAOHeader.STRING_TYPE, "Range Label");
     daoHeader.addHeader(DAOHeader.STRING_TYPE, "Range Type");
     daoHeader.addHeader(DAOHeader.STRING_TYPE, "Project");
-    daoHeader.addHeader(DAOHeader.STRING_TYPE, "Component");
+    daoHeader.addHeader(DAOHeader.STRING_TYPE, "Category");
     daoHeader.addHeader(DAOHeader.NUMBER_TYPE, "Time spent");
     daoHeader.addHeader(DAOHeader.STRING_TYPE, "Jira Search");
 
@@ -66,6 +70,16 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
 			List<Sprint> sprints = elasticSearchService.getAllSprintsPerProject(project, Integer.valueOf(jiraProperties.getMaximum()));
 			ranges.addAll(RangeUtil.getSprintRange(sprints));
 
+			List<ProjectMainLabelsProperties.ProjectLabelsList.ProjectLabel> labelsPerProject = projectMainLabelsProperties.getLabelsPerProject(project);
+			String mainCategory = "UNDEFINED";
+			// get the default category
+			for (ProjectMainLabelsProperties.ProjectLabelsList.ProjectLabel labelPerProject: labelsPerProject){
+				if ("default".equalsIgnoreCase(labelPerProject.getLabelName())){
+					mainCategory= labelPerProject.getCategoryName();
+
+				}
+			}
+
 			for (Range range : ranges) {
       worklogList = new WorklogList();
 
@@ -74,25 +88,36 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
         // that contains a worklog
         // in that range
         List<Issue> issues = elasticSearchService.getIssuesWithWorklogBetweenPeriod(range.getStartDate(), range.getEndDate(), project, 1000);
-
+				String category = mainCategory;
         for (Issue issue : issues) {
-          List<Worklog> worklogs = issue.getWorklogs();
-          if (issue.getComponents().size() != 0) {
-            for (Worklog worklog : worklogs) {
+          List<String> labels = issue.getLabels();
+          boolean found = false;
+					for (String label: labels){
+						for (ProjectMainLabelsProperties.ProjectLabelsList.ProjectLabel labelPerProject: labelsPerProject){
+							if (labelPerProject.getLabelName().equalsIgnoreCase(label)){
+								found= true;
+								category= labelPerProject.getCategoryName();
+								break;
+							}
+						}
+						if (found){
+							break;
+						}
+					}
+          for (Worklog worklog : issue.getWorklogs()) {
 
               if (worklog.getCreated().isAfter(range.getStartDate()) && worklog.getCreated().isBefore(range.getEndDate())) {
-                BigInteger nbComponents = BigInteger.valueOf(issue.getComponents().size());
-                BigInteger timeSpent = worklog.getTimeSpentSeconds().divide(nbComponents);
+                BigInteger timeSpent = worklog.getTimeSpentSeconds();
                 // browse components
                 for (Component component : issue.getComponents()) {
-                  WorklogRange worklogRange = worklogList.getRangeForEntry(range.getLabel(), component.getName());
+                  WorklogRange worklogRange = worklogList.getRangeForEntry(range.getLabel(), category);
                   worklogRange.addTime(timeSpent.intValue());
                   worklogRange.addJiraIssue(issue.getKey());
                 }
               }
             }
 
-          }
+
 
         }
         // add rows

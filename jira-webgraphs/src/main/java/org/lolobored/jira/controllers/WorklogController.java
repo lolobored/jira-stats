@@ -2,9 +2,10 @@ package org.lolobored.jira.controllers;
 
 import org.lolobored.jira.ProcessException;
 import org.lolobored.jira.dao.data.DAOTable;
+import org.lolobored.jira.services.worklog.category.WorklogCategoryService;
 import org.lolobored.jira.services.worklog.component.WorklogComponentService;
 import org.lolobored.jira.services.worklog.epic.WorklogEpicService;
-import org.lolobored.jira.webgraphs.JiraProperties;
+import org.lolobored.jira.properties.JiraProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,7 +24,10 @@ public class WorklogController {
   @Autowired
   WorklogComponentService worklogComponentService;
 
-	@Autowired
+  @Autowired
+  WorklogCategoryService worklogCategoryService;
+
+  @Autowired
 	WorklogEpicService worklogEpicService;
 
 	@Autowired
@@ -34,7 +37,34 @@ public class WorklogController {
   @RequestMapping(method = RequestMethod.GET)
   public String retrieveWorklogStatistics(ModelMap modelMap, HttpServletRequest httpRequest) throws ProcessException {
 
-    DAOTable share_per_component_type = worklogComponentService.getSharedLoggedTimePerComponent();
+    DAOTable share_per_category = worklogCategoryService.getSharedLoggedTimePerCategory();
+    // filling the data which we will use in the JS page
+    modelMap.addAttribute("share_per_category", share_per_category.toJSON());
+    // filling the div id which we will use so that it's replaced at
+    // everyplace we use it
+    modelMap.addAttribute("share_per_category_project_box", "share_per_category_project_box");
+    modelMap.addAttribute("share_per_category_range_type_box",
+        "share_per_category_range_type_box");
+    modelMap.addAttribute("share_per_category_range_box", "share_per_category_range_box");
+    modelMap.addAttribute("share_per_category_chart", "share_per_category_chart");
+    modelMap.addAttribute("share_per_category_table", "share_per_category_table");
+    modelMap.addAttribute("share_per_category_dashboard", "share_per_category_dashboard");
+
+		// filling the data which we will use in the JS page
+		modelMap.addAttribute("share_per_category_history", share_per_category.toJSON());
+		// filling the div id which we will use so that it's replaced at
+		// everyplace we use it
+		modelMap.addAttribute("share_per_category_history_project_box", "share_per_category_history_project_box");
+		modelMap.addAttribute("share_per_category_history_range_type_box",
+				"share_per_category_history_range_type_box");
+		modelMap.addAttribute("share_per_category_history_range_box", "share_per_category_history_range_box");
+		modelMap.addAttribute("share_per_category_history_chart", "share_per_category_history_chart");
+		modelMap.addAttribute("share_per_category_history_table", "share_per_category_history_table");
+		modelMap.addAttribute("share_per_category_history_dashboard", "share_per_category_history_dashboard");
+
+
+
+		DAOTable share_per_component_type = worklogComponentService.getSharedLoggedTimePerComponent();
     // filling the data which we will use in the JS page
     modelMap.addAttribute("share_per_component_type", share_per_component_type.toJSON());
     // filling the div id which we will use so that it's replaced at

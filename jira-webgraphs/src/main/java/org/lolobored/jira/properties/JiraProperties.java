@@ -1,4 +1,4 @@
-package org.lolobored.jira.webgraphs;
+package org.lolobored.jira.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -35,11 +35,15 @@
 
 		function initCharts() {
 
+			share_per_category_control = drawChartSharePerCategory();
+			share_per_category_history_control = drawChartSharePerCategoryHistory();
 			share_per_component_type_control = drawChartSharePerComponent();
 			share_per_component_type_history_control = drawChartSharePerComponentHistory();
 			share_per_epic_type_control = drawChartSharePerEpic();
 			share_per_epic_type_history_control = drawChartSharePerEpicHistory();
 
+			share_per_category_control.setState({'selectedValues': [sessionStorage.selectedProject]});
+			share_per_category_history_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 			share_per_component_type_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 			share_per_component_type_history_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 			share_per_epic_type_control.setState({'selectedValues': [sessionStorage.selectedProject]});
@@ -65,6 +69,26 @@
 			}
 		}
 
+		function drawChartSharePerCategory() {
+
+			control = drawSharePerComponent(${share_per_category}, '${share_per_category_dashboard}',
+					'${share_per_category_chart}',
+					'${share_per_category_project_box}',
+					'${share_per_category_range_type_box}',
+					'${share_per_category_range_box}',
+					'${share_per_category_table}');
+			return control;
+		}
+
+		function drawChartSharePerCategoryHistory() {
+
+			control = drawSharePerComponentHistory(${share_per_category_history}, '${share_per_category_history_dashboard}',
+					'${share_per_category_history_chart}',
+					'${share_per_category_history_project_box}',
+					'${share_per_category_history_range_type_box}',
+					'${share_per_category_history_table}');
+			return control;
+		}
 
 		// Share per issue type
 		function drawChartSharePerComponent() {
@@ -145,6 +169,34 @@
 </div>
 
 <br> <br> <br> <br>
+<!-- Share per issue type -->
+<div id="${share_per_category_dashboard}">
+	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
+		Share per category in working days</h2>
+	<div class="clear"></div>
+	<div id="${share_per_category_range_type_box}" class="range_type_box push_box"></div>
+	<div id="${share_per_category_project_box}" class="project_box"></div>
+	<div class="clear"></div>
+	<div id="${share_per_category_range_box}" class="range_label_box "></div>
+	<div class="clear"></div>
+	<div id="${share_per_category_chart}"></div>
+	<div id="${share_per_category_table}" class="table"></div>
+</div>
+
+<!-- Share per issue type -->
+<div id="${share_per_category_history_dashboard}">
+	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">
+		Share per category history in working days</h2>
+	<div class="clear"></div>
+	<div id="${share_per_category_history_range_type_box}" class="range_type_box push_box"></div>
+	<div id="${share_per_category_history_project_box}" class="project_box"></div>
+	<div class="clear"></div>
+	<div id="${share_per_category_history_range_box}" class="range_label_box "></div>
+	<div class="clear"></div>
+	<div id="${share_per_category_history_chart}"></div>
+	<div id="${share_per_category_history_table}" class="table"></div>
+</div>
+
 <!-- Share per issue type -->
 <div id="${share_per_component_type_dashboard}">
 	<h2 style="float: left; width: 320px;" title="Click on any points to get to the related JIRA page" class="tooltip">

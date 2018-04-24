@@ -3,9 +3,7 @@ package org.lolobored.jira.controllers;
 import org.lolobored.jira.ProcessException;
 import org.lolobored.jira.dao.data.DAOTable;
 import org.lolobored.jira.services.teamlog.TeamlogService;
-import org.lolobored.jira.services.worklog.component.WorklogComponentService;
-import org.lolobored.jira.services.worklog.epic.WorklogEpicService;
-import org.lolobored.jira.webgraphs.JiraProperties;
+import org.lolobored.jira.properties.JiraProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 

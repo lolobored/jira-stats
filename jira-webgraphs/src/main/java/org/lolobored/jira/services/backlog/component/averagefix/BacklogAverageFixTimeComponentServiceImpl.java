@@ -14,7 +14,7 @@ import org.lolobored.jira.ranges.Range;
 import org.lolobored.jira.ranges.RangeUtil;
 import org.lolobored.jira.services.backlog.component.store.BacklogList;
 import org.lolobored.jira.services.backlog.component.store.BacklogRange;
-import org.lolobored.jira.webgraphs.JiraProperties;
+import org.lolobored.jira.properties.JiraProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

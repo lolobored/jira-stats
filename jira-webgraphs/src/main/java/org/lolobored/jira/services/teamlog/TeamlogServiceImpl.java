@@ -9,13 +9,13 @@ import org.lolobored.jira.model.Component;
 import org.lolobored.jira.model.Issue;
 import org.lolobored.jira.model.Sprint;
 import org.lolobored.jira.model.Worklog;
+import org.lolobored.jira.properties.JiraProperties;
 import org.lolobored.jira.ranges.Range;
 import org.lolobored.jira.ranges.RangeUtil;
 import org.lolobored.jira.services.teamlog.store.TeamlogEntry;
 import org.lolobored.jira.services.teamlog.store.TeamlogList;
 import org.lolobored.jira.services.worklog.store.WorklogList;
 import org.lolobored.jira.services.worklog.store.WorklogRange;
-import org.lolobored.jira.webgraphs.JiraProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

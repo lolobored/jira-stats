@@ -2,10 +2,11 @@ package org.lolobored.jira.controllers;
 
 import org.lolobored.jira.ProcessException;
 import org.lolobored.jira.dao.data.DAOTable;
+import org.lolobored.jira.properties.ProjectMainLabelsProperties;
 import org.lolobored.jira.services.backlog.component.averagefix.BacklogAverageFixTimeComponentService;
 import org.lolobored.jira.services.backlog.component.opening.BacklogOpeningComponentService;
 import org.lolobored.jira.services.backlog.component.total.BacklogComponentService;
-import org.lolobored.jira.webgraphs.JiraProperties;
+import org.lolobored.jira.properties.JiraProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,8 +34,12 @@ public class BacklogController {
 	@Autowired
   JiraProperties jiraProperties;
 
+	@Autowired
+	ProjectMainLabelsProperties projectMainLabelsProperties;
 
-  @RequestMapping(method = RequestMethod.GET)
+
+
+	@RequestMapping(method = RequestMethod.GET)
   public String retrieveWorklogStatistics(ModelMap modelMap, HttpServletRequest httpRequest) throws ProcessException {
 
 		DAOTable backlog__per_component = backlogComponentService.getBacklogPerComponent();
