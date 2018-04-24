@@ -88,8 +88,9 @@ public class WorklogCategoryServiceImpl implements WorklogCategoryService {
         // that contains a worklog
         // in that range
         List<Issue> issues = elasticSearchService.getIssuesWithWorklogBetweenPeriod(range.getStartDate(), range.getEndDate(), project, 1000);
-				String category = mainCategory;
+
         for (Issue issue : issues) {
+					String category = mainCategory;
           List<String> labels = issue.getLabels();
           boolean found = false;
 					for (String label: labels){
@@ -109,16 +110,12 @@ public class WorklogCategoryServiceImpl implements WorklogCategoryService {
               if (worklog.getCreated().isAfter(range.getStartDate()) && worklog.getCreated().isBefore(range.getEndDate())) {
                 BigInteger timeSpent = worklog.getTimeSpentSeconds();
                 // browse components
-                for (Component component : issue.getComponents()) {
-                  WorklogRange worklogRange = worklogList.getRangeForEntry(range.getLabel(), category);
-                  worklogRange.addTime(timeSpent.intValue());
-                  worklogRange.addJiraIssue(issue.getKey());
-                }
+								WorklogRange worklogRange = worklogList.getRangeForEntry(range.getLabel(), category);
+                worklogRange.addTime(timeSpent.intValue());
+                worklogRange.addJiraIssue(issue.getKey());
+
               }
             }
-
-
-
         }
         // add rows
         for (WorklogRange value : worklogList.getWorklogRanges().values()) {
