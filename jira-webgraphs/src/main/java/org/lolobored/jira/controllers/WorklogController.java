@@ -18,37 +18,37 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @Controller
-@RequestMapping(value = {"/","/worklog", "/home"})
+@RequestMapping(value = {"/", "/worklog", "/home"})
 public class WorklogController {
 
-  @Autowired
-  WorklogComponentService worklogComponentService;
+	@Autowired
+	WorklogComponentService worklogComponentService;
 
-  @Autowired
-  WorklogCategoryService worklogCategoryService;
+	@Autowired
+	WorklogCategoryService worklogCategoryService;
 
-  @Autowired
+	@Autowired
 	WorklogEpicService worklogEpicService;
 
 	@Autowired
-  JiraProperties jiraProperties;
+	JiraProperties jiraProperties;
 
 
-  @RequestMapping(method = RequestMethod.GET)
-  public String retrieveWorklogStatistics(ModelMap modelMap, HttpServletRequest httpRequest) throws ProcessException {
+	@RequestMapping(method = RequestMethod.GET)
+	public String retrieveWorklogStatistics(ModelMap modelMap, HttpServletRequest httpRequest) throws ProcessException {
 
-    DAOTable share_per_category = worklogCategoryService.getSharedLoggedTimePerCategory();
-    // filling the data which we will use in the JS page
-    modelMap.addAttribute("share_per_category", share_per_category.toJSON());
-    // filling the div id which we will use so that it's replaced at
-    // everyplace we use it
-    modelMap.addAttribute("share_per_category_project_box", "share_per_category_project_box");
-    modelMap.addAttribute("share_per_category_range_type_box",
-        "share_per_category_range_type_box");
-    modelMap.addAttribute("share_per_category_range_box", "share_per_category_range_box");
-    modelMap.addAttribute("share_per_category_chart", "share_per_category_chart");
-    modelMap.addAttribute("share_per_category_table", "share_per_category_table");
-    modelMap.addAttribute("share_per_category_dashboard", "share_per_category_dashboard");
+		DAOTable share_per_category = worklogCategoryService.getSharedLoggedTimePerCategory();
+		// filling the data which we will use in the JS page
+		modelMap.addAttribute("share_per_category", share_per_category.toJSON());
+		// filling the div id which we will use so that it's replaced at
+		// everyplace we use it
+		modelMap.addAttribute("share_per_category_project_box", "share_per_category_project_box");
+		modelMap.addAttribute("share_per_category_range_type_box",
+			"share_per_category_range_type_box");
+		modelMap.addAttribute("share_per_category_range_box", "share_per_category_range_box");
+		modelMap.addAttribute("share_per_category_chart", "share_per_category_chart");
+		modelMap.addAttribute("share_per_category_table", "share_per_category_table");
+		modelMap.addAttribute("share_per_category_dashboard", "share_per_category_dashboard");
 
 		// filling the data which we will use in the JS page
 		modelMap.addAttribute("share_per_category_history", share_per_category.toJSON());
@@ -56,79 +56,80 @@ public class WorklogController {
 		// everyplace we use it
 		modelMap.addAttribute("share_per_category_history_project_box", "share_per_category_history_project_box");
 		modelMap.addAttribute("share_per_category_history_range_type_box",
-				"share_per_category_history_range_type_box");
+			"share_per_category_history_range_type_box");
 		modelMap.addAttribute("share_per_category_history_range_box", "share_per_category_history_range_box");
+		modelMap.addAttribute("share_per_category_history_category_name_box", "share_per_category_history_category_name_box");
 		modelMap.addAttribute("share_per_category_history_chart", "share_per_category_history_chart");
 		modelMap.addAttribute("share_per_category_history_table", "share_per_category_history_table");
 		modelMap.addAttribute("share_per_category_history_dashboard", "share_per_category_history_dashboard");
 
 
-
 		DAOTable share_per_component_type = worklogComponentService.getSharedLoggedTimePerComponent();
-    // filling the data which we will use in the JS page
-    modelMap.addAttribute("share_per_component_type", share_per_component_type.toJSON());
-    // filling the div id which we will use so that it's replaced at
-    // everyplace we use it
-    modelMap.addAttribute("share_per_component_type_project_box", "share_per_component_type_project_box");
-    modelMap.addAttribute("share_per_component_type_range_type_box",
-      "share_per_component_type_range_type_box");
-    modelMap.addAttribute("share_per_component_type_range_box", "share_per_component_type_range_box");
-    modelMap.addAttribute("share_per_component_type_chart", "share_per_component_type_chart");
-    modelMap.addAttribute("share_per_component_type_table", "share_per_component_type_table");
-    modelMap.addAttribute("share_per_component_type_dashboard", "share_per_component_type_dashboard");
+		// filling the data which we will use in the JS page
+		modelMap.addAttribute("share_per_component_type", share_per_component_type.toJSON());
+		// filling the div id which we will use so that it's replaced at
+		// everyplace we use it
+		modelMap.addAttribute("share_per_component_type_project_box", "share_per_component_type_project_box");
+		modelMap.addAttribute("share_per_component_type_range_type_box",
+			"share_per_component_type_range_type_box");
+		modelMap.addAttribute("share_per_component_type_range_box", "share_per_component_type_range_box");
+		modelMap.addAttribute("share_per_component_type_chart", "share_per_component_type_chart");
+		modelMap.addAttribute("share_per_component_type_table", "share_per_component_type_table");
+		modelMap.addAttribute("share_per_component_type_dashboard", "share_per_component_type_dashboard");
 
 
-    // filling the data which we will use in the JS page
-    modelMap.addAttribute("share_per_component_type_history", share_per_component_type.toJSON());
-    // filling the div id which we will use so that it's replaced at
-    // everyplace we use it
-    modelMap.addAttribute("share_per_component_type_history_project_box", "share_per_component_type_history_project_box");
-    modelMap.addAttribute("share_per_component_type_history_range_type_box",
-      "share_per_component_type_history_range_type_box");
-    modelMap.addAttribute("share_per_component_type_history_range_box", "share_per_component_type_history_range_box");
-    modelMap.addAttribute("share_per_component_type_history_chart", "share_per_component_type_history_chart");
-    modelMap.addAttribute("share_per_component_type_history_table", "share_per_component_type_history_table");
-    modelMap.addAttribute("share_per_component_type_history_dashboard", "share_per_component_type_history_dashboard");
+		// filling the data which we will use in the JS page
+		modelMap.addAttribute("share_per_component_type_history", share_per_component_type.toJSON());
+		// filling the div id which we will use so that it's replaced at
+		// everyplace we use it
+		modelMap.addAttribute("share_per_component_type_history_project_box", "share_per_component_type_history_project_box");
+		modelMap.addAttribute("share_per_component_type_history_range_type_box",
+			"share_per_component_type_history_range_type_box");
+		modelMap.addAttribute("share_per_component_type_history_range_box", "share_per_component_type_history_range_box");
+		modelMap.addAttribute("share_per_component_type_history_component_name_box", "share_per_component_type_history_component_name_box");
+		modelMap.addAttribute("share_per_component_type_history_chart", "share_per_component_type_history_chart");
+		modelMap.addAttribute("share_per_component_type_history_table", "share_per_component_type_history_table");
+		modelMap.addAttribute("share_per_component_type_history_dashboard", "share_per_component_type_history_dashboard");
 
-    DAOTable share_per_epic_type = worklogEpicService.getSharedLoggedTimePerEpic();
-    // filling the data which we will use in the JS page
-    modelMap.addAttribute("share_per_epic_type", share_per_epic_type.toJSON());
-    // filling the div id which we will use so that it's replaced at
-    // everyplace we use it
-    modelMap.addAttribute("share_per_epic_type_project_box", "share_per_epic_type_project_box");
-    modelMap.addAttribute("share_per_epic_type_range_type_box",
-        "share_per_epic_type_range_type_box");
-    modelMap.addAttribute("share_per_epic_type_range_box", "share_per_epic_type_range_box");
-    modelMap.addAttribute("share_per_epic_type_chart", "share_per_epic_type_chart");
-    modelMap.addAttribute("share_per_epic_type_table", "share_per_epic_type_table");
-    modelMap.addAttribute("share_per_epic_type_dashboard", "share_per_epic_type_dashboard");
-
-
-    // filling the data which we will use in the JS page
-    modelMap.addAttribute("share_per_epic_type_history", share_per_epic_type.toJSON());
-    // filling the div id which we will use so that it's replaced at
-    // everyplace we use it
-    modelMap.addAttribute("share_per_epic_type_history_project_box", "share_per_epic_type_history_project_box");
-    modelMap.addAttribute("share_per_epic_type_history_range_type_box",
-        "share_per_epic_type_history_range_type_box");
-    modelMap.addAttribute("share_per_epic_type_history_range_box", "share_per_epic_type_history_range_box");
-    modelMap.addAttribute("share_per_epic_type_history_epic_name_box", "share_per_epic_type_history_epic_name_box");
-    modelMap.addAttribute("share_per_epic_type_history_chart", "share_per_epic_type_history_chart");
-    modelMap.addAttribute("share_per_epic_type_history_table", "share_per_epic_type_history_table");
-    modelMap.addAttribute("share_per_epic_type_history_dashboard", "share_per_epic_type_history_dashboard");
+		DAOTable share_per_epic_type = worklogEpicService.getSharedLoggedTimePerEpic();
+		// filling the data which we will use in the JS page
+		modelMap.addAttribute("share_per_epic_type", share_per_epic_type.toJSON());
+		// filling the div id which we will use so that it's replaced at
+		// everyplace we use it
+		modelMap.addAttribute("share_per_epic_type_project_box", "share_per_epic_type_project_box");
+		modelMap.addAttribute("share_per_epic_type_range_type_box",
+			"share_per_epic_type_range_type_box");
+		modelMap.addAttribute("share_per_epic_type_range_box", "share_per_epic_type_range_box");
+		modelMap.addAttribute("share_per_epic_type_chart", "share_per_epic_type_chart");
+		modelMap.addAttribute("share_per_epic_type_table", "share_per_epic_type_table");
+		modelMap.addAttribute("share_per_epic_type_dashboard", "share_per_epic_type_dashboard");
 
 
-    return "/worklog";
-  }
+		// filling the data which we will use in the JS page
+		modelMap.addAttribute("share_per_epic_type_history", share_per_epic_type.toJSON());
+		// filling the div id which we will use so that it's replaced at
+		// everyplace we use it
+		modelMap.addAttribute("share_per_epic_type_history_project_box", "share_per_epic_type_history_project_box");
+		modelMap.addAttribute("share_per_epic_type_history_range_type_box",
+			"share_per_epic_type_history_range_type_box");
+		modelMap.addAttribute("share_per_epic_type_history_range_box", "share_per_epic_type_history_range_box");
+		modelMap.addAttribute("share_per_epic_type_history_epic_name_box", "share_per_epic_type_history_epic_name_box");
+		modelMap.addAttribute("share_per_epic_type_history_chart", "share_per_epic_type_history_chart");
+		modelMap.addAttribute("share_per_epic_type_history_table", "share_per_epic_type_history_table");
+		modelMap.addAttribute("share_per_epic_type_history_dashboard", "share_per_epic_type_history_dashboard");
 
-  @ModelAttribute("projectList")
-  public Map<String, String> getProjectList() {
-    Map<String, String> projectList = new TreeMap<>();
-    String[] projects= jiraProperties.getProject().split(";");
-    for (String project: projects) {
-      projectList.put(project, project);
-    }
-    return projectList;
-  }
+
+		return "/worklog";
+	}
+
+	@ModelAttribute("projectList")
+	public Map<String, String> getProjectList() {
+		Map<String, String> projectList = new TreeMap<>();
+		String[] projects = jiraProperties.getProject().split(";");
+		for (String project : projects) {
+			projectList.put(project, project);
+		}
+		return projectList;
+	}
 
 }

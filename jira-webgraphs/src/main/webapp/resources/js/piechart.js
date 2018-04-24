@@ -17,7 +17,7 @@
  *          range_div : the div name for the range combobox
  * @returns {undefined}
  */
-function drawSharePerEpic(jsonData, dashboard_name_div, chart_div, project_range_div, range_type_div, range_div,
+function drawPieChart(jsonData, dashboard_name_div, chart_div, project_range_div, range_type_div, range_div,
                           chart_table_div) {
 
     // The data we will be working on look like this:
@@ -31,7 +31,7 @@ function drawSharePerEpic(jsonData, dashboard_name_div, chart_div, project_range
     var range_label_column = 0;
     var range_type_column = 1;
     var project_range_column = 2;
-    var epic_type_column = 3;
+    var component_type_column = 3;
     var time_spent_column = 4;
     var time_spent_jira_search_column = 5;
 
@@ -146,7 +146,7 @@ function drawSharePerEpic(jsonData, dashboard_name_div, chart_div, project_range
 
         // Group datas per issue type and add the sum of the time spent (aggregation against individual timespent)
         // and the list of associated jira issues (we need to concatenate issues and start / close url)
-        groupedData = google.visualization.data.group(filteredData, [epic_type_column], [{
+        groupedData = google.visualization.data.group(filteredData, [component_type_column], [{
             'column': time_spent_column,
             'aggregation': google.visualization.data.sum,
             'type': 'number'

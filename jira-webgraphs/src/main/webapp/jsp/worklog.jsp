@@ -10,15 +10,11 @@
 	<spring:url value="/resources/css/graph.css" var="graphcss"/>
 	<!-- From https://www.creativejuiz.fr/blog/tutoriels/creer-menu-sticky-avec-javascript-css#sticky-back -->
 	<spring:url value="/resources/js/navigation-bar.js" var="navigationjs"/>
-	<spring:url value="/resources/js/sharepertype.js" var="sharepertypejs"/>
-	<spring:url value="/resources/js/sharepertypehistory.js" var="sharepertypehistoryjs"/>
-	<spring:url value="/resources/js/shareperepic.js" var="shareperepicjs"/>
-	<spring:url value="/resources/js/shareperepichistory.js" var="shareperepichistoryjs"/>
+	<spring:url value="/resources/js/piechart.js" var="piechartjs"/>
+	<spring:url value="/resources/js/areagraphhistory.js" var="areagraphhistoryjs"/>
 	<link type="text/css" rel="stylesheet" href="${graphcss}"/>
-	<script type="text/javascript" src="${sharepertypejs}"></script>
-	<script type="text/javascript" src="${sharepertypehistoryjs}"></script>
-	<script type="text/javascript" src="${shareperepicjs}"></script>
-	<script type="text/javascript" src="${shareperepichistoryjs}"></script>
+	<script type="text/javascript" src="${piechartjs}"></script>
+	<script type="text/javascript" src="${areagraphhistoryjs}"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 
@@ -35,12 +31,12 @@
 
 		function initCharts() {
 
-			share_per_category_control = drawChartSharePerCategory();
+			share_per_category_control = drawPieChartPerCategory();
 			share_per_category_history_control = drawChartSharePerCategoryHistory();
-			share_per_component_type_control = drawChartSharePerComponent();
+			share_per_component_type_control = drawPieChartPerComponent();
 			share_per_component_type_history_control = drawChartSharePerComponentHistory();
-			share_per_epic_type_control = drawChartSharePerEpic();
-			share_per_epic_type_history_control = drawChartSharePerEpicHistory();
+			share_per_epic_type_control = drawPieChartPerEpic();
+			share_per_epic_type_history_control = drawAreaGraphPerEpicHistory();
 
 			share_per_category_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 			share_per_category_history_control.setState({'selectedValues': [sessionStorage.selectedProject]});
@@ -69,9 +65,9 @@
 			}
 		}
 
-		function drawChartSharePerCategory() {
+		function drawPieChartPerCategory() {
 
-			control = drawSharePerComponent(${share_per_category}, '${share_per_category_dashboard}',
+			control = drawPieChart(${share_per_category}, '${share_per_category_dashboard}',
 					'${share_per_category_chart}',
 					'${share_per_category_project_box}',
 					'${share_per_category_range_type_box}',
@@ -82,18 +78,19 @@
 
 		function drawChartSharePerCategoryHistory() {
 
-			control = drawSharePerComponentHistory(${share_per_category_history}, '${share_per_category_history_dashboard}',
+			control = drawAreaChartHistory(${share_per_category_history}, '${share_per_category_history_dashboard}',
 					'${share_per_category_history_chart}',
 					'${share_per_category_history_project_box}',
 					'${share_per_category_history_range_type_box}',
-					'${share_per_category_history_table}');
+				'${share_per_category_history_category_name_box}',
+				'${share_per_category_history_table}');
 			return control;
 		}
 
 		// Share per issue type
-		function drawChartSharePerComponent() {
+		function drawPieChartPerComponent() {
 
-			control = drawSharePerComponent(${share_per_component_type}, '${share_per_component_type_dashboard}',
+			control = drawPieChart(${share_per_component_type}, '${share_per_component_type_dashboard}',
 					'${share_per_component_type_chart}',
 					'${share_per_component_type_project_box}',
 					'${share_per_component_type_range_type_box}',
@@ -105,18 +102,19 @@
 		// Share per issue type history
 		function drawChartSharePerComponentHistory() {
 
-			control = drawSharePerComponentHistory(${share_per_component_type_history}, '${share_per_component_type_history_dashboard}',
+			control = drawAreaChartHistory(${share_per_component_type_history}, '${share_per_component_type_history_dashboard}',
 					'${share_per_component_type_history_chart}',
 					'${share_per_component_type_history_project_box}',
 					'${share_per_component_type_history_range_type_box}',
-					'${share_per_component_type_history_table}');
+				'${share_per_component_type_history_component_name_box}',
+				'${share_per_component_type_history_table}');
 			return control;
 		}
 
 		// Share per issue type
-		function drawChartSharePerEpic() {
+		function drawPieChartPerEpic() {
 
-			control = drawSharePerEpic(${share_per_epic_type}, '${share_per_epic_type_dashboard}',
+			control = drawPieChart(${share_per_epic_type}, '${share_per_epic_type_dashboard}',
 					'${share_per_epic_type_chart}',
 					'${share_per_epic_type_project_box}',
 					'${share_per_epic_type_range_type_box}',
@@ -126,9 +124,9 @@
 		}
 
 		// Share per issue type history
-		function drawChartSharePerEpicHistory() {
+		function drawAreaGraphPerEpicHistory() {
 
-			control = drawSharePerEpicHistory(${share_per_epic_type_history}, '${share_per_epic_type_history_dashboard}',
+			control = drawAreaChartHistory(${share_per_epic_type_history}, '${share_per_epic_type_history_dashboard}',
 					'${share_per_epic_type_history_chart}',
 					'${share_per_epic_type_history_project_box}',
 					'${share_per_epic_type_history_range_type_box}',
@@ -191,7 +189,7 @@
 	<div id="${share_per_category_history_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_category_history_project_box}" class="project_box"></div>
 	<div class="clear"></div>
-	<div id="${share_per_category_history_range_box}" class="range_label_box "></div>
+	<div id="${share_per_category_history_category_name_box}"  class="range_label_box "></div>
 	<div class="clear"></div>
 	<div id="${share_per_category_history_chart}"></div>
 	<div id="${share_per_category_history_table}" class="table"></div>
@@ -216,12 +214,13 @@
 	<h2 style="float: left; width: 370px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Share per component type history in working days</h2>
 	<div class="clear"></div>
-	<div id="${share_per_component_type_history_range_type_box}" class="range_type_box push_box_further"></div>
+	<div id="${share_per_component_type_history_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_component_type_history_project_box}" class="project_box"></div>
 	<div class="clear"></div>
-	<div id="${share_per_component_type_history_chart}" class="chart"></div>
+	<div id="${share_per_component_type_history_component_name_box}"  class="range_label_box "></div>
+	<div class="clear"></div>
+	<div id="${share_per_component_type_history_chart}" ></div>
 	<div id="${share_per_component_type_history_table}" class="table"></div>
-	<br> <br>
 </div>
 
 <!-- Share per issue type -->
@@ -243,14 +242,13 @@
 	<h2 style="float: left; width: 370px;" title="Click on any points to get to the related JIRA page" class="tooltip">
 		Share per epic type history in working days</h2>
 	<div class="clear"></div>
-	<div id="${share_per_epic_type_history_range_type_box}" class="range_type_box push_box_further"></div>
+	<div id="${share_per_epic_type_history_range_type_box}" class="range_type_box push_box"></div>
 	<div id="${share_per_epic_type_history_project_box}" class="project_box"></div>
 	<div class="clear"></div>
-	<div id="${share_per_epic_type_history_epic_name_box}"  class="epic_name_box push_box_further "></div>
+	<div id="${share_per_epic_type_history_epic_name_box}"  class="range_label_box "></div>
 	<div class="clear"></div>
-	<div id="${share_per_epic_type_history_chart}" class="chart"></div>
+	<div id="${share_per_epic_type_history_chart}" ></div>
 	<div id="${share_per_epic_type_history_table}" class="table"></div>
-	<br> <br>
 </div>
 
 <script type="text/javascript" src="${navigationjs}"></script>

@@ -10,9 +10,9 @@
 	<spring:url value="/resources/css/graph.css" var="graphcss"/>
 	<!-- From https://www.creativejuiz.fr/blog/tutoriels/creer-menu-sticky-avec-javascript-css#sticky-back -->
 	<spring:url value="/resources/js/navigation-bar.js" var="navigationjs"/>
-	<spring:url value="/resources/js/teamlog.js" var="teamlogjs"/>
+	<spring:url value="/resources/js/calendar.js" var="calendarjs"/>
 	<link type="text/css" rel="stylesheet" href="${graphcss}"/>
-	<script type="text/javascript" src="${teamlogjs}"></script>
+	<script type="text/javascript" src="${calendarjs}"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 	<!-- Create all dashboards and set control states -->

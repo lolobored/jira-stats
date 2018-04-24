@@ -10,9 +10,9 @@
 	<spring:url value="/resources/css/graph.css" var="graphcss"/>
 	<!-- From https://www.creativejuiz.fr/blog/tutoriels/creer-menu-sticky-avec-javascript-css#sticky-back -->
 	<spring:url value="/resources/js/navigation-bar.js" var="navigationjs"/>
-	<spring:url value="/resources/js/backlogpercomponent.js" var="backlogpercomponentjs"/>
+	<spring:url value="/resources/js/linechart.js" var="linechartjs"/>
 	<link type="text/css" rel="stylesheet" href="${graphcss}"/>
-	<script type="text/javascript" src="${backlogpercomponentjs}"></script>
+	<script type="text/javascript" src="${linechartjs}"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 	<!-- Create all dashboards and set control states -->
@@ -28,9 +28,9 @@
 
 		function initCharts() {
 
-			backlog_per_component_control = drawChartBacklogPerComponent();
-			backlog_opening_per_component_control = drawChartBacklogOpeningPerComponent();
-			backlog_average_fix_time_per_component_control = drawChartBacklogAverageFixTimePerComponent();
+			backlog_per_component_control = drawLineChartPerComponent();
+			backlog_opening_per_component_control = drawLineChartOpeningPerComponent();
+			backlog_average_fix_time_per_component_control = drawLineChartAverageFixTimePerComponent();
 
 			backlog_per_component_control.setState({'selectedValues': [sessionStorage.selectedProject]});
 			backlog_opening_per_component_control.setState({'selectedValues': [sessionStorage.selectedProject]});
@@ -58,9 +58,9 @@
 
 
 		// draw chart
-		function drawChartBacklogPerComponent() {
+		function drawLineChartPerComponent() {
 
-			control = drawBacklogPerComponent(${backlog__per_component}, '${backlog__per_component_dashboard}',
+			control = drawLineChart(${backlog__per_component}, '${backlog__per_component_dashboard}',
 				'${backlog__per_component_chart}',
 				'${backlog__per_component_project_box}',
 				'${backlog__per_component_range_type_box}',
@@ -69,9 +69,9 @@
 		}
 
 		// draw chart
-		function drawChartBacklogOpeningPerComponent() {
+		function drawLineChartOpeningPerComponent() {
 
-			control = drawBacklogPerComponent(${backlog_opening_per_component}, '${backlog_opening_per_component_dashboard}',
+			control = drawLineChart(${backlog_opening_per_component}, '${backlog_opening_per_component_dashboard}',
 				'${backlog_opening_per_component_chart}',
 				'${backlog_opening_per_component_project_box}',
 				'${backlog_opening_per_component_range_type_box}',
@@ -80,9 +80,9 @@
 		}
 
 		// draw calendar
-		function drawChartBacklogAverageFixTimePerComponent() {
+		function drawLineChartAverageFixTimePerComponent() {
 
-			control = drawBacklogPerComponent(${backlog_average_fix_per_component}, '${backlog_average_fix_per_component_dashboard}',
+			control = drawLineChart(${backlog_average_fix_per_component}, '${backlog_average_fix_per_component_dashboard}',
 					'${backlog_average_fix_per_component_chart}',
 					'${backlog_average_fix_per_component_project_box}',
 					'${backlog_average_fix_per_component_range_type_box}',
