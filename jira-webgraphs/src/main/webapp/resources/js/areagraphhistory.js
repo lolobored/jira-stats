@@ -150,10 +150,11 @@ function drawAreaChartHistory(jsonData, dashboard_name_div, chart_div, project_r
 
 	// Establish dependencies, so that every time we change one combobox we update the others and drow dashboard
 	dashboard.bind(projectBox, rangeTypeBox);
-	dashboard.bind(rangeTypeBox, table);
+	dashboard.bind(rangeTypeBox, epicBox);
 	dashboard.bind(epicBox, table);
 	dashboard.draw(chartDataTable);
 	var initialData = table.getDataTable();
+	var selectedValuesEpic= [];
 
 	// Refresh the chart when a control has been used
 	google.visualization.events.addListener(table, 'ready', function () {
@@ -163,6 +164,20 @@ function drawAreaChartHistory(jsonData, dashboard_name_div, chart_div, project_r
 		filteredData = currentData;
 
 		var selectedValues = epicBox.getState()['selectedValues'];
+
+		// if the length is greater than the previous one
+		// it's because another control was selected
+		// triggering selection for every single values
+		if (selectedValues.length > selectedValuesEpic.length +1){
+			epicBox.setState({selectedValues: []});
+			selectedValuesEpic= [];
+			selectedValues=[];
+			epicBox.draw();
+		}
+		else{
+			selectedValuesEpic= selectedValues.slice(0);
+		}
+
 		// if no value is selected then consider
 		// every values are selected
 		if (selectedValues.length === 0) {
