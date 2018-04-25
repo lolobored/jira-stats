@@ -150,7 +150,7 @@ function drawAreaChartHistory(jsonData, dashboard_name_div, chart_div, project_r
 
 	// Establish dependencies, so that every time we change one combobox we update the others and drow dashboard
 	dashboard.bind(projectBox, rangeTypeBox);
-	dashboard.bind(rangeTypeBox, epicBox);
+	dashboard.bind(rangeTypeBox, table);
 	dashboard.bind(epicBox, table);
 	dashboard.draw(chartDataTable);
 	var initialData = table.getDataTable();
