@@ -14,6 +14,7 @@ import org.lolobored.jira.ranges.RangeUtil;
 import org.lolobored.jira.services.worklog.store.WorklogList;
 import org.lolobored.jira.services.worklog.store.WorklogRange;
 import org.lolobored.jira.properties.JiraProperties;
+import org.lolobored.jira.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -102,13 +103,9 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
           newRow.put(daoHeader.get(1).getValue(), range.getType());
           newRow.put(daoHeader.get(2).getValue(), project);
           newRow.put(daoHeader.get(3).getValue(), value.getWorklogKey().getEntry());
-          int day = (int) TimeUnit.SECONDS.toDays(value.getTotalTimeSpent());
 
-          long hours = TimeUnit.SECONDS.toHours(value.getTotalTimeSpent() - (day * 24));
-          // a working day is 8h not 24
-          day = day * 3;
-          hours = new Double((double) hours / 60 * 100).intValue();
-          String time = String.format("%d.%s", day, StringUtils.leftPad(String.valueOf(hours), 2, "0"));
+          String time = TimeUtils.returnTimeSpentPerDay(value.getTotalTimeSpent());
+
           newRow.put(daoHeader.get(4).getValue(), time);
           StringBuilder jiraSearch = new StringBuilder(jiraProperties.getBaseurl()).append("/issues/?jql=key%20in(");
           boolean start = true;

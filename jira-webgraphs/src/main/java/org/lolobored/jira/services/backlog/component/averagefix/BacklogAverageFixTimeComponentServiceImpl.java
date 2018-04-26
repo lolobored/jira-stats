@@ -15,6 +15,7 @@ import org.lolobored.jira.ranges.RangeUtil;
 import org.lolobored.jira.services.backlog.component.store.BacklogList;
 import org.lolobored.jira.services.backlog.component.store.BacklogRange;
 import org.lolobored.jira.properties.JiraProperties;
+import org.lolobored.jira.utils.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -140,13 +141,9 @@ public class BacklogAverageFixTimeComponentServiceImpl implements BacklogAverage
 						row.put(column.getLabel(), "0");
 					} else {
 						Integer value = Integer.parseInt(row.get(column.getLabel()));
-						int day = (int) TimeUnit.SECONDS.toDays(value);
 
-						long hours = TimeUnit.SECONDS.toHours(value - (day * 24));
-						// a working day is 8h not 24
-						day = day * 3;
-						hours = new Double((double) hours / 60 * 100).intValue();
-						String time = String.format("%d.%s", day, StringUtils.leftPad(String.valueOf(hours), 2, "0"));
+						String time = TimeUtils.returnTimeSpentPerDay(value);
+
 						row.put(column.getLabel(), time);
 					}
 				}
