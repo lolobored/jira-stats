@@ -164,6 +164,7 @@ function drawAreaChartHistory(jsonData, dashboard_name_div, chart_div, project_r
 		filteredData = currentData;
 
 		var selectedValues = epicBox.getState()['selectedValues'];
+		var computeOthers= true;
 
 		// if the length is greater than the previous one
 		// it's because another control was selected
@@ -181,6 +182,7 @@ function drawAreaChartHistory(jsonData, dashboard_name_div, chart_div, project_r
 		// if no value is selected then consider
 		// every values are selected
 		if (selectedValues.length === 0) {
+			computeOthers = false;
 			// explore every row to get eventual epics
 			for (var i = 0; i < currentData.getNumberOfRows(); i++) {
 				var epicName = currentData.getValue(i, epic_name_column);
@@ -232,9 +234,11 @@ function drawAreaChartHistory(jsonData, dashboard_name_div, chart_div, project_r
 				possibleColumns.push(epicName);
 			}
 		}
-		// push others
-		newTable.addColumn('number', otherColumnName);
-		newTable.addColumn('string', otherColumnName + " jira search");
+		if (computeOthers === true) {
+			// push others
+			newTable.addColumn('number', otherColumnName);
+			newTable.addColumn('string', otherColumnName + " jira search");
+		}
 
 		// create rows
 		// each row is a range label
