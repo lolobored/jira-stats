@@ -34,6 +34,9 @@ public class BacklogAverageFixTimeComponentServiceImpl implements BacklogAverage
 	@Autowired
 	JiraProperties jiraProperties;
 
+	@Autowired
+	TimeUtils timeUtils;
+
 	@Override
 	public DAOTable getAverageFixTimePerComponent() {
 		String jiraSearchAppend = " jira search";
@@ -142,7 +145,7 @@ public class BacklogAverageFixTimeComponentServiceImpl implements BacklogAverage
 					} else {
 						Integer value = Integer.parseInt(row.get(column.getLabel()));
 
-						String time = TimeUtils.returnTimeSpentPerDay(value);
+						String time = timeUtils.returnTimeSpentPerDay(value);
 
 						row.put(column.getLabel(), time);
 					}

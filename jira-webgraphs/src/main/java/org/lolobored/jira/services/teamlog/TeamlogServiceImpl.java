@@ -99,8 +99,8 @@ public class TeamlogServiceImpl implements TeamlogService {
 				int timeSpentInSec = value.getTotalTimeSpent();
 				int timeSpentInHours = timeSpentInSec / 3600;
 				// max it at 8 to get the graph right
-				if (timeSpentInHours > 8) {
-					timeSpentInHours = 8;
+				if (timeSpentInHours > Integer.parseInt(jiraProperties.getHoursPerDay())) {
+					timeSpentInHours = Integer.parseInt(jiraProperties.getHoursPerDay());
 				}
 				newRow.put(daoHeader.get(1).getValue(), Integer.toString(timeSpentInHours));
 				newRow.put(daoHeader.get(2).getValue(), value.getTeamlogKey().getGuy());

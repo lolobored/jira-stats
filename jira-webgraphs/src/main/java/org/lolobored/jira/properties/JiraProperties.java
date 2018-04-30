@@ -17,4 +17,5 @@ public class JiraProperties {
   private String username;
   private String password;
   private String maximum;
+  private String hoursPerDay;
 }

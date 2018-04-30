@@ -32,6 +32,9 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
   @Autowired
   JiraProperties jiraProperties;
 
+  @Autowired
+  TimeUtils timeUtils;
+
   @Override
   public DAOTable getSharedLoggedTimePerComponent() {
     DAOTable result = new DAOTable();
@@ -104,7 +107,7 @@ public class WorklogComponentServiceImpl implements WorklogComponentService {
           newRow.put(daoHeader.get(2).getValue(), project);
           newRow.put(daoHeader.get(3).getValue(), value.getWorklogKey().getEntry());
 
-          String time = TimeUtils.returnTimeSpentPerDay(value.getTotalTimeSpent());
+          String time = timeUtils.returnTimeSpentPerDay(value.getTotalTimeSpent());
 
           newRow.put(daoHeader.get(4).getValue(), time);
           StringBuilder jiraSearch = new StringBuilder(jiraProperties.getBaseurl()).append("/issues/?jql=key%20in(");
