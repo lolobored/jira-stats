@@ -108,7 +108,7 @@ public class JiraFetcher {
           for (JiraWorklog jiraWorklog : jiraWorklogs) {
             Worklog worklog = new Worklog();
             worklog.setTimeSpentSeconds(jiraWorklog.getTimeSpentSeconds());
-            worklog.setCreated(jiraWorklog.getUpdated().toInstant().atZone(ZoneId.systemDefault())
+            worklog.setCreated(jiraWorklog.getStarted().toInstant().atZone(ZoneId.systemDefault())
               .toLocalDateTime());
             worklog.setAuthor(jiraWorklog.getAuthor().getDisplayName());
             issue.getWorklogs().add(worklog);
